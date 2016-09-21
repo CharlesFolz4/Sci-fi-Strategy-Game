@@ -1,7 +1,6 @@
 package Starsystem;
 
 import util.Faction;
-import util.Location;
 import util.Selectable;
 
 public class Star extends Selectable{
@@ -9,9 +8,9 @@ public class Star extends Selectable{
 	private String name;
 	private Planet planets[];
 	
-	private boolean hasShipyard;
+	private int shipyardLevel;
 	
-	public Star( int x, int y, String name, String type, Planet... planets){
+	public Star( int x, int y, String name, Planet... planets){
 		super(x,y);
 		this.name    = name;
 		this.planets = planets;
@@ -42,5 +41,9 @@ public class Star extends Selectable{
 
 	public Planet[] getPlanets() {
 		return planets;
+	}
+	
+	public int shipyardLevel(){
+		return shipyardLevel;
 	}
 }

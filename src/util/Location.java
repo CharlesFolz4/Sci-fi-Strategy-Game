@@ -65,9 +65,9 @@ public class Location {
 	}
 
 	public boolean hasAnything() {
-		boolean temp = true;
-		temp &= star != null;
-		temp &= ships.size() > 0;
+		boolean temp = false;
+		temp |= star != null;
+		temp |= ships.size() > 0;
 		return temp;
 	}
 }

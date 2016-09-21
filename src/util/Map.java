@@ -17,6 +17,8 @@ public class Map {
 		map = new Location[16][16];
 		factions = new Faction[3];
 		
+		//default map
+		
 		Faction jump = new Faction();
 		factions[0] = jump;
 		Planet homeWorldJ = new Planet("Alpha Prime");
@@ -36,22 +38,12 @@ public class Map {
 		Faction uninhabited = new Faction();
 		factions[2] = uninhabited;
 		Planet deltaP = new Planet("Delta Prime");
-		Star deltaS = new Star(3, 12, uninhabited, "Delta", deltaP);
+		Star deltaS = new Star(3, 12,  "Delta", deltaP);
 		map[3][12] = new Location(deltaS);
 		
 		Planet gammaP = new Planet("Gamma Prime");
-		Star gammaS = new Star(12, 3, uninhabited, "Gamma", gammaP);
+		Star gammaS = new Star(12, 3,  "Gamma", gammaP);
 		map[12][3] = new Location(gammaS);
-		
-		//Test map
-//		Faction test = new Faction();
-//		JumpShip jumpShip = new JumpShip(1, 3, test, "Jump Ship", .25);
-//		WarpShip warpShip = new WarpShip(1, 1, test, "Warp Ship", 4);
-//		map[1][3] = new Location(jumpShip);
-//		map[1][1] = new Location(warpShip);
-//		Planet planet = new Planet("Planet");
-//		Star star = new Star(3, 3, "Test Star","Blue Star", planet);
-//		map[3][3] = new Location(star);
 	}
 	
 	

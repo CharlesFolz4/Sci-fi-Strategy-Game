@@ -1,6 +1,8 @@
 package util.gui;
 
+import Ships.JumpShip;
 import Ships.Ship;
+import Ships.WarpShip;
 import Starsystem.Star;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -84,18 +86,20 @@ public class GameGUI extends Application{
 		centerPane.getChildren().addAll(utilPane, makeMapView());
 		subRoot.setCenter(centerPane);
 		VBox sideMenu = makeSideMenu();
-		sideMenu.setStyle("-fx-background-color: red");
-		//sideMenu.prefHeightProperty().bind(subRoot.heightProperty());
-		sideMenu.setTranslateY(200);
-		sideMenu.setTranslateX(-70);
-		
+		sideMenu.setStyle("-fx-background-color: transparent");
+		sideMenu.prefHeightProperty().bind(subRoot.heightProperty());
+//		sideMenu.setTranslateY(210);
+//		sideMenu.setTranslateX(-70);
+//		
 		//sideMenu.setMaxHeight(Screen.getPrimary().getVisualBounds().getHeight());
 		
 		subRoot.setRight(sideMenu);
+//		subRoot.setMaxHeight(primaryStage.getHeight());
+//		subRoot.setMaxWidth(primaryStage.getWidth());
 		
 		StackPane root = new StackPane();
 		root.getChildren().addAll(new ImageView(imageCache.getBackground()), subRoot);
-		//root.setMaxHeight(100);
+//		root.setMaxHeight(100);
 		
 		primaryStage.setScene(new Scene(root));
 		primaryStage.getIcons().add(imageCache.getFlag());
@@ -210,7 +214,7 @@ public class GameGUI extends Application{
 		});
 		actionBox.getChildren().addAll(topButton, middleButton, bottomButton);
 		
-		root.setPadding(new Insets(100, 25, 100, 25));
+		root.setPadding(new Insets(25, 25, 0, 25));
 		root.setStyle("-fx-background-color: rgba(16, 16, 16, .75);" +
 					  "-fx-border-width: 0 0 0 4; -fx-border-color: #D0D0E0;");
 		root.getChildren().addAll(infoBox, actionBox);
@@ -304,7 +308,7 @@ public class GameGUI extends Application{
 			for(int y = 0; y < gameMap.getDimensions()[1]; ++y){
 				temp = new StackPane();
 				temp.setPrefSize(100, 100);
-				temp.setMinSize(100, 100);
+//				temp.setMinSize(100, 100);
 				//TODO: google make nodes not push each other/overlapping nodes
 				temp.setStyle("-fx-background-color: transparent;" +
 						"-fx-border-width: 1 1 1 1; -fx-border-color: rgba(255, 255, 255, .125);");
@@ -320,20 +324,19 @@ public class GameGUI extends Application{
 				mapView.add(temp, x, y);
 				
 				temp.setOnMouseClicked((event) -> {
+					System.out.println("CLICKY!");
 					StackPane source = (StackPane)event.getSource();
 					int sourceX = GridPane.getColumnIndex(source);
 					int sourceY = GridPane.getRowIndex(source);
 					 
 					/*TODO
-					 * 
 					 * handle ship movement better
-					 * make arrayList(?) of ships tied to target coordinates
-					 * Hashmap(?) with ship as index, location as destination?
 					 */
 					
 					Location target = gameMap.getMap()[sourceX][sourceY];
 					
 					if(event.getButton() == MouseButton.SECONDARY || shipMoveFlag){
+						System.out.println("MOVING");
 						shipMoveFlag = false;
 						
 						/*TODO
@@ -341,7 +344,16 @@ public class GameGUI extends Application{
 						 * add destination 
 						 */
 						Thread pathFinderThread = new Thread( () -> {
-							gameController.moveShip((Ship)selected, sourceX, sourceY, this);
+							if(selected instanceof Ship){
+								((Ship)selected).setDestination(sourceX, sourceY);
+							}
+							if(selected instanceof WarpShip){
+								gameController.moveWarpShip((WarpShip)selected);
+								System.out.println("Warp ship");
+							} else if (selected instanceof JumpShip){
+								gameController.moveJumpShip((JumpShip)selected);
+								System.out.println("It's a jump ship!");
+							}
 							return;
 						});
 						pathFinderThread.start();
@@ -393,10 +405,6 @@ public class GameGUI extends Application{
 			}
 		}
 		
-		//panPane.setPannable(true);
-		//panPane.setStyle("-fx-background-color: transparent;");
-		//panPane.setContent(mapView);
-		//panPane.getChildrenUnmodifiable().get(0).setStyle("-fx-background-color: transparent;");
 		return mapView;
 	}
 
@@ -408,7 +416,7 @@ public class GameGUI extends Application{
 		audioCache.loadGameAudio();
 		
 		gameMap = new Map();
-		gameController = new GameController(gameMap, gameMap.getFactions());
+		gameController = new GameController(gameMap, this, gameMap.getFactions());
 		
 		shipMoveFlag = false;
 	}

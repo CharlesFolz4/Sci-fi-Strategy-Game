@@ -3,15 +3,15 @@ package util;
 import Ships.Ship;
 import Starsystem.Star;
 
-public class Faction {
+public class Faction{
 	private boolean usesJump;
 	private Star[] stars;
 	private Ship[] ships;
 	
 	
-	public String getIncome() {
-		// TODO Auto-generated method stub
-		return null;
+	public int getIncome() {
+		// TODO actually implement stuff
+		return 0;
 	}
 
 	public int getPopulation() {
@@ -33,5 +33,12 @@ public class Faction {
 	public int getSystemCount(){
 		return stars.length;
 	}
+
+	public Ship[] getShips() {
+		return ships;
+	}
 	
+	public boolean usesJump(){
+		return usesJump;
+	}
 }
