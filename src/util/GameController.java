@@ -21,28 +21,29 @@ public class GameController {
 	
 	public void endFactionTurn(){
 		//move all unmoved ships of the faction that still need to move, reset stuff for next turn
-		for(Ship ship : factions[currentFactionIndex].getShips()){
-			if(ship instanceof WarpShip){
-				if(!ship.getCoordinates().equals(ship.getDestination()) && ((WarpShip)ship).getMovementRemaining() > 0){
-					moveWarpShip((WarpShip)ship);
+		if(factions[currentFactionIndex].getShips() != null){
+			for(Ship ship : factions[currentFactionIndex].getShips()){
+				if(ship instanceof WarpShip){
+					if(!ship.getCoordinates().equals(ship.getDestination()) && ((WarpShip)ship).getMovementRemaining() > 0){
+						moveWarpShip((WarpShip)ship);
+					}
+					((WarpShip)ship).setMovementRemaining(((WarpShip) ship).getSpeed());
+				} else { //ship is jump ship
+					if(!ship.getCoordinates().equals(ship.getDestination()) && ((WarpShip)ship).getMovementRemaining() > 0){
+						moveJumpShip((JumpShip)ship);
+					}
+					((JumpShip)ship).setHasDecrementedThisTurn(false);
 				}
-				((WarpShip)ship).setMovementRemaining(((WarpShip) ship).getSpeed());
-			} else { //ship is jump ship
-				if(!ship.getCoordinates().equals(ship.getDestination()) && ((WarpShip)ship).getMovementRemaining() > 0){
-					moveJumpShip((JumpShip)ship);
-				}
-				((JumpShip)ship).setHasDecrementedThisTurn(false);
 			}
 		}
-		
 		
 		//TODO: handle building queues and shipyards and stuff like that, 
 		//and build the infrastructure to support that
 		
 		//TODO add income, population growth, resource collection, etc.
 		
-		//if last faction in array, reset to 0, else increment faction
-		currentFactionIndex = currentFactionIndex==(factions.length-1)? 0:currentFactionIndex++;
+		
+		currentFactionIndex = currentFactionIndex==(factions.length-1)? 0:++currentFactionIndex;
 	}
 	
 	public Faction getCurrentFaction(){
@@ -84,7 +85,9 @@ public class GameController {
 			int jumpTime = (int)(distance * ship.getBaseCalcTime());
 			ship.setTurnsToJump(jumpTime);
 		}
-		ship.decrementTurnsToJump();
+		if(!ship.hasDecrementedThisTurn()){
+			ship.decrementTurnsToJump();
+		}
 	}
 
 	public void moveWarpShip(WarpShip ship) {
@@ -125,7 +128,6 @@ public class GameController {
 							tempX = -1;
 							tempY = -1;
 			}
-			//TODO: Star-eating bug still might exist?
 			if(map.getMap()[tempX][tempY] == null){
 				map.getMap()[tempX][tempY] = new Location(ship);
 				System.out.println("new location");

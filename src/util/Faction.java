@@ -1,17 +1,29 @@
 package util;
 
+import java.util.ArrayList;
+
 import Ships.Ship;
 import Starsystem.Star;
 
 public class Faction{
 	private boolean usesJump;
-	private Star[] stars;
-	private Ship[] ships;
+	private ArrayList<Star> stars;
+	private ArrayList<Ship> ships;
+	
+	public Faction(boolean usesJump){
+		this.usesJump = usesJump;
+		stars = new ArrayList<Star>();
+		ships = new ArrayList<Ship>();
+	}
 	
 	
 	public int getIncome() {
-		// TODO actually implement stuff
+		// TODO actually implement income and whatnot
 		return 0;
+	}
+	
+	public void addStar(Star star){
+		stars.add(star);
 	}
 
 	public int getPopulation() {
@@ -31,10 +43,14 @@ public class Faction{
 	}
 	
 	public int getSystemCount(){
-		return stars.length;
+		return stars.size();
+	}
+	
+	public ArrayList<Star> getSystems(){
+		return stars;
 	}
 
-	public Ship[] getShips() {
+	public ArrayList<Ship> getShips() {
 		return ships;
 	}
 	

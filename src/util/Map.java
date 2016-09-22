@@ -19,29 +19,31 @@ public class Map {
 		
 		//default map
 		
-		Faction jump = new Faction();
+		Faction jump = new Faction(true);
 		factions[0] = jump;
-		Planet homeWorldJ = new Planet("Alpha Prime");
+		Planet homeWorldJ = new Planet("Alpha Prime", 100, 10_000_000);
 		Star homeStarJ = new Star(1, 1, jump, "Alpha", homeWorldJ);
+		//jump.addStar(homeStarJ);
 		JumpShip flagshipJ = new JumpShip(1, 2, jump, "Alpha Flagship", .25);
 		map[1][1] = new Location(homeStarJ);
 		map[1][2] = new Location(flagshipJ);
 		
-		Faction warp = new Faction();
+		Faction warp = new Faction(false);
 		factions[1] = warp;
-		Planet homeWorldW = new Planet("Beta Prime");
+		Planet homeWorldW = new Planet("Beta Prime", 100, 10_000_000);
 		Star homeStarW = new Star(14, 13, warp, "Beta", homeWorldW);
+		//warp.addStar(homeStarW);
 		WarpShip flagshipW = new WarpShip(14, 12, warp, "Beta Flagship", 4);
 		map[14][13] = new Location(homeStarW);
 		map[14][12] = new Location(flagshipW);
 		
-		Faction uninhabited = new Faction();
+		Faction uninhabited = new Faction(false);
 		factions[2] = uninhabited;
-		Planet deltaP = new Planet("Delta Prime");
+		Planet deltaP = new Planet("Delta Prime", 6_000_000);
 		Star deltaS = new Star(3, 12,  "Delta", deltaP);
 		map[3][12] = new Location(deltaS);
 		
-		Planet gammaP = new Planet("Gamma Prime");
+		Planet gammaP = new Planet("Gamma Prime", 6_000_000);
 		Star gammaS = new Star(12, 3,  "Gamma", gammaP);
 		map[12][3] = new Location(gammaS);
 	}

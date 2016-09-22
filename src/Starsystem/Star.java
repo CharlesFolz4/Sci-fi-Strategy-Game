@@ -21,6 +21,7 @@ public class Star extends Selectable{
 		this.faction = faction;
 		this.name    = name;
 		this.planets = planets;
+		faction.addStar(this);
 	}
 	
 	public String getName(){

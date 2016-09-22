@@ -21,7 +21,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import util.GameController;
 import util.Location;
@@ -50,12 +49,12 @@ public class GameGUI extends Application{
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		
 		BorderPane subRoot = new BorderPane();
 		subRoot.setStyle("-fx-background-color: transparent");
 		StackPane centerPane = new StackPane();
 		centerPane.setStyle("-fx-background-color: transparent; -fx-border-width: 4; -fx-border-color: white;");
 		centerPane.prefHeightProperty().bind(subRoot.heightProperty());
-		
 		BorderPane utilPane = new BorderPane();
 		utilPane.setStyle("-fx-background-color: transparent");
 		HBox bottomRoot = new HBox();
@@ -71,22 +70,24 @@ public class GameGUI extends Application{
 		nextHighlight.setVisible(false);
 		nextButton.getChildren().addAll(new ImageView(imageCache.getButtonBR()), nextLabel, nextHighlight);
 		nextButton.setOnMouseEntered((event) -> {
-			System.out.println("Enteres");
         	nextHighlight.setVisible(true);
 	    });
 		nextButton.setOnMouseExited((event) -> {
 			nextHighlight.setVisible(false);
-			System.out.println("exited");
 		});
+		nextButton.setOnMouseClicked((event) -> {
+			System.out.println("Next clicked");
+			gameController.endFactionTurn();
+		});
+		nextButton.setMouseTransparent(false);
 		bottomRoot.getChildren().addAll(nextButton);
-		
+		bottomRoot.toFront();
 		utilPane.setBottom(bottomRoot);
 
 		
-		centerPane.getChildren().addAll(utilPane, makeMapView());
+		centerPane.getChildren().addAll(makeMapView(), utilPane);
 		subRoot.setCenter(centerPane);
 		VBox sideMenu = makeSideMenu();
-		sideMenu.setStyle("-fx-background-color: transparent");
 		sideMenu.prefHeightProperty().bind(subRoot.heightProperty());
 //		sideMenu.setTranslateY(210);
 //		sideMenu.setTranslateX(-70);
@@ -135,10 +136,10 @@ public class GameGUI extends Application{
 			sideInfoLabels[i].setTextFill(Color.WHITE);
 			sideInfoLabels[i].setAlignment(Pos.CENTER_LEFT);
 		}
-		sideInfoLabels[0].setText("Income: \t0");// + gameController.getCurrentFaction().getIncome());
-		sideInfoLabels[1].setText("Population: \t0");// + gameController.getCurrentFaction().getPopulation());
-		sideInfoLabels[2].setText("Planets: \t0");// + gameController.getCurrentFaction().getPlanetCount());
-		sideInfoLabels[3].setText("Systems: \t0");// + gameController.getCurrentFaction().getSystemCount());
+		sideInfoLabels[0].setText("Income: \t\t0");// + gameController.getCurrentFaction().getIncome());
+		sideInfoLabels[1].setText("Population: \t" + gameController.getCurrentFaction().getPopulation());
+		sideInfoLabels[2].setText("Planets: \t\t" + gameController.getCurrentFaction().getPlanetCount());
+		sideInfoLabels[3].setText("Systems: \t\t" + gameController.getCurrentFaction().getSystemCount());
 		sideInfoLabels[4].setText("PLACEHOLDER");
 		infoBox.getChildren().addAll(sideInfoLabels);
 		
@@ -309,7 +310,7 @@ public class GameGUI extends Application{
 				temp = new StackPane();
 				temp.setPrefSize(100, 100);
 //				temp.setMinSize(100, 100);
-				//TODO: google make nodes not push each other/overlapping nodes
+				//TODO: make nodes not push each other/overlapping nodes
 				temp.setStyle("-fx-background-color: transparent;" +
 						"-fx-border-width: 1 1 1 1; -fx-border-color: rgba(255, 255, 255, .125);");
 				Location location = gameMap.getMap()[x][y];
@@ -324,7 +325,7 @@ public class GameGUI extends Application{
 				mapView.add(temp, x, y);
 				
 				temp.setOnMouseClicked((event) -> {
-					System.out.println("CLICKY!");
+					System.out.println("Map clicked");
 					StackPane source = (StackPane)event.getSource();
 					int sourceX = GridPane.getColumnIndex(source);
 					int sourceY = GridPane.getRowIndex(source);

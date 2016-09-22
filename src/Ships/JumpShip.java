@@ -16,6 +16,7 @@ public class JumpShip extends Ship{
 		this.baseCalcTime = baseCalcTime;
 		//this.range = range;
 		this.hasDecrementedThisTurn = false;
+		turnsToJump = -1;
 	}
 	
 	public void setHasDecrementedThisTurn(boolean hasDecrementedThisTurn){
