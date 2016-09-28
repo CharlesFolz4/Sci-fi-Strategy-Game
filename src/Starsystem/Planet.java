@@ -26,7 +26,7 @@ public class Planet {
 	}
 	
 	public void growPopulation(double rate){
-		population = population * rate;
+		population += population * rate;
 		if(population > popCap){
 			population = popCap;
 		}

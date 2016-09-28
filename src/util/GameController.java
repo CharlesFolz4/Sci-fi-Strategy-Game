@@ -3,6 +3,7 @@ package util;
 import Ships.JumpShip;
 import Ships.Ship;
 import Ships.WarpShip;
+import Starsystem.Star;
 import javafx.application.Platform;
 import util.gui.GameGUI;
 
@@ -19,6 +20,34 @@ public class GameController {
 		currentFactionIndex = 0;
 	}
 	
+	public boolean attackShip(Ship attacker, Ship defender){
+		int xDistance = Math.abs(attacker.getCoordinates()[0] - defender.getCoordinates()[0]);
+		int yDistance = Math.abs(attacker.getCoordinates()[1] - defender.getCoordinates()[1]);
+		if(xDistance <= 1 && yDistance <=1){
+			boolean attacking = true;
+			int damage ;
+			//TODO: Firing will consume supplies
+			while(attacker.getCurrentHealth() > 0 && defender.getCurrentHealth() > 0){
+				damage = 0;
+				if(attacking){
+					damage =  attacker.getWeapons()[0] - defender.getDefenses()[0] ;
+					damage += attacker.getWeapons()[1] - defender.getDefenses()[1];
+					damage += attacker.getWeapons()[2] - defender.getDefenses()[2];
+					
+					defender.takeDamage(damage);
+				}else{
+					damage = defender.getWeapons()[0] - attacker.getDefenses()[0];
+					damage = defender.getWeapons()[1] - attacker.getDefenses()[1];
+					damage = defender.getWeapons()[2] - attacker.getDefenses()[2];
+					
+					attacker.takeDamage(damage);
+				}
+				attacking = !attacking;
+			}
+		}
+		return false;
+	}
+	
 	public void endFactionTurn(){
 		//move all unmoved ships of the faction that still need to move, reset stuff for next turn
 		if(factions[currentFactionIndex].getShips() != null){
@@ -29,7 +58,7 @@ public class GameController {
 					}
 					((WarpShip)ship).setMovementRemaining(((WarpShip) ship).getSpeed());
 				} else { //ship is jump ship
-					if(!ship.getCoordinates().equals(ship.getDestination()) && ((WarpShip)ship).getMovementRemaining() > 0){
+					if(!ship.getCoordinates().equals(ship.getDestination()) && !((JumpShip)ship).hasDecrementedThisTurn()){
 						moveJumpShip((JumpShip)ship);
 					}
 					((JumpShip)ship).setHasDecrementedThisTurn(false);
@@ -40,54 +69,61 @@ public class GameController {
 		//TODO: handle building queues and shipyards and stuff like that, 
 		//and build the infrastructure to support that
 		
-		//TODO add income, population growth, resource collection, etc.
+		//TODO add population growth
+		factions[currentFactionIndex].addToTreasury(factions[currentFactionIndex].getIncome());
+		for(Star star : factions[currentFactionIndex].getSystems()){
+			//make pop grow by 2.2% ?
+			star.growPopulation(0.022);
+		}
 		
 		
-		currentFactionIndex = currentFactionIndex==(factions.length-1)? 0:++currentFactionIndex;
-	}
-	
-	public Faction getCurrentFaction(){
-		return factions[currentFactionIndex];
+		currentFactionIndex = currentFactionIndex==(factions.length-2)? 0:++currentFactionIndex;
+		//TODO: This is where the faction AI will control their empires from
 	}
 	
 	public void moveJumpShip(JumpShip ship){
-		
-		if(ship.getTurnsToJump() > 0) {
-			//Decrement is outside the if/else block
-		} else if ( ship.getTurnsToJump() == 0){
-			//TODO actually make the jump
-			if(map.getMap()[ship.getDestination()[0]][ship.getDestination()[1]] == null){
-				map.getMap()[ship.getDestination()[0]][ship.getDestination()[1]] = new Location(ship);
-				System.out.println("new location");
-			} else {
-				map.getMap()[ship.getDestination()[0]][ship.getDestination()[1]].addShip(ship);
-				System.out.println("Added to old location!");
+		if(!ship.hasDecrementedThisTurn()){
+			if(ship.getTurnsToJump() > 1) {
+				System.out.println("Doesn't jump this turn "  + ship.getTurnsToJump());
+				
+			} else  { //if negative number, calculate new jump
+				int deltaX = ship.getDestination()[0] - ship.getCoordinates()[0];
+				int deltaY = ship.getDestination()[1] - ship.getCoordinates()[1];
+				double distance = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
+				int jumpTime = (int)(distance * ship.getCalcTimeMod());
+				ship.setTurnsToJump(jumpTime);
+				System.out.println("Negative number, calculate new jump distance: " + ship.getTurnsToJump());
 			}
-			map.getMap()[ship.getCoordinates()[0]][ship.getCoordinates()[1]].removeShip(ship);
-			if(!map.getMap()[ship.getCoordinates()[0]][ship.getCoordinates()[1]].hasAnything()){
-				map.getMap()[ship.getCoordinates()[0]][ship.getCoordinates()[1]] = null;
-				System.out.println("Deleted!");
+			ship.decrementTurnsToJump();
+			if(ship.getTurnsToJump() == 0){
+				System.out.println("makes the jump "  + ship.getTurnsToJump());
+				if(map.getMap()[ship.getDestination()[0]][ship.getDestination()[1]] == null){
+					map.getMap()[ship.getDestination()[0]][ship.getDestination()[1]] = new Location(ship);
+				} else {
+					map.getMap()[ship.getDestination()[0]][ship.getDestination()[1]].addShip(ship);
+				}
+				map.getMap()[ship.getCoordinates()[0]][ship.getCoordinates()[1]].removeShip(ship);
+				if(!map.getMap()[ship.getCoordinates()[0]][ship.getCoordinates()[1]].hasAnything()){
+					map.getMap()[ship.getCoordinates()[0]][ship.getCoordinates()[1]] = null;
+				}
+				ship.setCoordinates(ship.getDestination()[0], ship.getDestination()[1]);
+				
+				ship.decrementTurnsToJump();
 			}
-			ship.setCoordinates(ship.getDestination()[0], ship.getDestination()[1]);
 			
-
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {
 					GUI.updateDisplay();
+					//TODO fix bug where this text gets set during turn change instead of population
+					GUI.getSideInfoLabels()[1].setText("Turns to jump: \t" + ((JumpShip)ship).getTurnsToJump());
 				}
 			});
-			
-		} else { //if negative number, calculate new jump
-			int deltaX = ship.getDestination()[0] - ship.getCoordinates()[0];
-			int deltaY = ship.getDestination()[1] - ship.getCoordinates()[1];
-			double distance = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
-			int jumpTime = (int)(distance * ship.getBaseCalcTime());
-			ship.setTurnsToJump(jumpTime);
 		}
-		if(!ship.hasDecrementedThisTurn()){
-			ship.decrementTurnsToJump();
-		}
+	}
+	
+	public Faction getCurrentFaction(){
+		return factions[currentFactionIndex];
 	}
 
 	public void moveWarpShip(WarpShip ship) {
@@ -130,15 +166,15 @@ public class GameController {
 			}
 			if(map.getMap()[tempX][tempY] == null){
 				map.getMap()[tempX][tempY] = new Location(ship);
-				System.out.println("new location");
+//				System.out.println("new location");
 			} else {
 				map.getMap()[tempX][tempY].addShip(ship);
-				System.out.println("Added to old location!");
+//				System.out.println("Added to old location!");
 			}
 			map.getMap()[ship.getCoordinates()[0]][ship.getCoordinates()[1]].removeShip(ship);
 			if(!map.getMap()[ship.getCoordinates()[0]][ship.getCoordinates()[1]].hasAnything()){
 				map.getMap()[ship.getCoordinates()[0]][ship.getCoordinates()[1]] = null;
-				System.out.println("Deleted!");
+//				System.out.println("Deleted!");
 			}
 			ship.setCoordinates(tempX, tempY);
 			ship.decrementMovementRemaining();
@@ -147,13 +183,13 @@ public class GameController {
 				@Override
 				public void run() {
 					GUI.updateDisplay();
+					GUI.getSideInfoLabels()[1].setText("Movement: \t\t" + ((WarpShip)ship).getMovementRemaining() +"/" + ((WarpShip)ship).getSpeed());
 				}
 			});
 			
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
 				
 			};
 			

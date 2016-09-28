@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -68,6 +69,7 @@ public class MainMenu extends Application{
 		newGameLabel.setStyle("-fx-font-size: 40;");
 		newGameLabel.setTextFill(Color.WHITE);
 		newGame.getChildren().add(newGameLabel);
+		Tooltip.install(newGame, new Tooltip("Dev note: Partially Implemented"));
 		newGame.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent t) {
@@ -95,6 +97,7 @@ public class MainMenu extends Application{
 		loadGameLabel.setStyle("-fx-font-size: 40;");
 		loadGameLabel.setTextFill(Color.WHITE);
 		loadGame.getChildren().add(loadGameLabel);
+		Tooltip.install(loadGame, new Tooltip("Dev note: Not Yet Implemented"));
 		loadGame.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent t) {
@@ -121,6 +124,7 @@ public class MainMenu extends Application{
 		settingsLabel.setStyle("-fx-font-size: 40;");
 		settingsLabel.setTextFill(Color.WHITE);
 		settings.getChildren().add(settingsLabel);
+		Tooltip.install(newGame, new Tooltip("Dev note: Not Yet Implemented"));
 		settings.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent t) {
@@ -147,6 +151,7 @@ public class MainMenu extends Application{
 		exitLabel.setStyle("-fx-font-size: 40;");
 		exitLabel.setTextFill(Color.WHITE);
 		exit.getChildren().add(exitLabel);
+		Tooltip.install(newGame, new Tooltip("Exits to desktop"));
 		exit.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent t) {

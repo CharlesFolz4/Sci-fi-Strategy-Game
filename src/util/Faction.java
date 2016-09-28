@@ -6,20 +6,38 @@ import Ships.Ship;
 import Starsystem.Star;
 
 public class Faction{
+	String name;
 	private boolean usesJump;
 	private ArrayList<Star> stars;
 	private ArrayList<Ship> ships;
 	
-	public Faction(boolean usesJump){
+	private double taxRate;
+	private double treasury;
+	
+	public Faction(String name, boolean usesJump){
+		this.name = name;
 		this.usesJump = usesJump;
 		stars = new ArrayList<Star>();
 		ships = new ArrayList<Ship>();
+		taxRate = 0.25;
+		treasury = 1000;
+	}
+	
+	public void setTaxRate(double taxRate){
+		this.taxRate = taxRate;
 	}
 	
 	
-	public int getIncome() {
-		// TODO actually implement income and whatnot
-		return 0;
+	public double getIncome() {
+		double income = 0;
+		for(Star star:stars){
+			income += star.getPopulation() * star.getProsperity() * taxRate;
+		}
+		for(Ship ship:ships){
+			income -= ship.getUpkeep();
+		}
+		//TODO add build costs, trade income etc.
+		return income;
 	}
 	
 	public void addStar(Star star){
@@ -57,4 +75,26 @@ public class Faction{
 	public boolean usesJump(){
 		return usesJump;
 	}
+
+	public void addShip(Ship ship) {
+		ships.add(ship);
+	}
+
+	public double getTreasury() {
+		return treasury;
+	}
+	
+	public void addToTreasury(double amount){
+		treasury += amount;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public double getTaxRate() {
+		return taxRate;
+	}
+	
+	
 }

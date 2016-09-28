@@ -4,13 +4,18 @@ import util.Faction;
 
 public class WarpShip extends Ship{
 	private int speed;
-	//private double range;
-	
 	private int movementRemaining;
-	
 
-	public WarpShip(int x, int y, Faction faction, String name, int speed) {
-		super(x, y, faction, name);
+	//default constructor
+	public WarpShip(int x, int y, int upkeep, Faction faction, String name, int speed, int health) {
+		super(x, y, upkeep, faction, name, health);
+		this.speed = speed;
+		movementRemaining = speed;
+	}
+	
+	//advanced constructor
+	public WarpShip(int[] coordinates, Faction faction, String name, int upkeep, int health, int cargoSpace, int speed, int[] weapons, int[] defenses){
+		super(coordinates, faction, name, upkeep, health, cargoSpace, weapons, defenses);
 		this.speed = speed;
 		movementRemaining = speed;
 	}

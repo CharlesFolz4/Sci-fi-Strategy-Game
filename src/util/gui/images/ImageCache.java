@@ -25,6 +25,7 @@ public class ImageCache {
 	private Image ship;
 	private Image shipS;
 	private Image ship1;
+	private Image target;
 	
 	public void loadGameImages(){
 		background = loadImage("Star_Background.png");
@@ -33,6 +34,7 @@ public class ImageCache {
 		shipS      = loadImage("Ship_Icon.png");
 		ship       = loadImage("Ship_Blueprints_S.png");
 		ship1      = loadImage("Ship_Blueprints1.png");
+		target     = loadImage("target.png");
 	}
 	
 	public void loadMenuImages(){
@@ -79,6 +81,10 @@ public class ImageCache {
 		}
 		
 		return image;
+	}
+	
+	public Image getTarget(){
+		return target;
 	}
 	
 	public Image getShip1(){

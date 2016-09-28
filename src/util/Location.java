@@ -48,7 +48,6 @@ public class Location {
 	
 	public Ship[] getShips(){
 		if(ships.size() > 0){
-			System.out.println();
 			return ships.toArray(new Ship[0]);
 		} else {
 			return null;

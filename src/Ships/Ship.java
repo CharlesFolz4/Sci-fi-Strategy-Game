@@ -9,27 +9,84 @@ public abstract class Ship extends Selectable{
 	private String captain;//purely for flavor for now, may add actual officers later
 	
 	private int[] destination;
+	private int upkeep;
 	
+	private int health;
+	private int maxHealth;
 	private int supplies;
 	private int sensorRange;
-	private int sensorStrength;
 	
-	private int missiles;
-	private int lasers;
-	private int projectile;
+	private int[] weapons;
+	private int[] defenses;
+	private int cargoSpace;
+	private String cargoType;
+	private int cargoSize;
 	
-	private int pointDefense;
-	private int shields;
-	private int armor;
-	
-	public Ship(int x, int y, Faction faction, String name){
+	public Ship(int x, int y, int upkeep, Faction faction, String name, int health){
 		super(x, y);
+		this.upkeep  = upkeep;
 		this.faction = faction;
-		this.name = name;
-		
-		destination = new int[2];
+		this.name    = name;
+		this.faction.addShip(this);
+		this.maxHealth = health;
+		this.health    = health;
+		destination    = new int[2];
+		destination[0] = x;
+		destination[1] = y;
 	}
 	
+	public Ship(int[] coordinates, Faction faction, String name, int upkeep, int health, int cargoSpace, int[] weapons, int[] defenses) {
+		super(coordinates[0], coordinates[1]);
+		this.faction    = faction;
+		this.name       = name;
+		this.upkeep     = upkeep;
+		this.health     = health;
+		this.cargoSpace = cargoSpace;
+		this.cargoType  = "None";
+		this.cargoSize  = 0;
+		
+		this.weapons    = weapons;
+		this.defenses   = defenses;
+		
+	}
+	
+	public void emptyCargo(){
+		cargoType = "none";
+		cargoSize = 0;
+	}
+	
+	public void addCargo(int amount){
+		cargoSize += amount;
+	}
+	
+	public void setCargoType(String cargoType){
+		this.cargoType = cargoType;
+	}
+	
+	public int getCargoSize(){
+		return cargoSize;
+	}
+	
+	public String getCargoType(){
+		return cargoType;
+	}
+	
+	public int getCargoSpace(){
+		return cargoSpace;
+	}
+	
+	public int getMaxHealth(){
+		return maxHealth;
+	}
+	
+	public int getCurrentHealth(){
+		return health;
+	}
+	
+	public void takeDamage(int damage){
+		health -= damage;
+	}
+
 	public Faction getFaction(){
 		return faction;
 	}
@@ -45,6 +102,18 @@ public abstract class Ship extends Selectable{
 	public void setDestination(int x, int y){
 		destination[0] = x;
 		destination[1] = y;
+	}
+	
+	public int getUpkeep(){
+		return upkeep;
+	}
+
+	public int[] getWeapons() {
+		return weapons;
+	}
+	
+	public int[] getDefenses(){
+		return defenses;
 	}
 	
 }

@@ -5,16 +5,22 @@ import util.Faction;
 
 public class JumpShip extends Ship{
 	
-	private int turnsToJump;
+	private int turnsToJump; 
 	private boolean hasDecrementedThisTurn;
-
-	private double baseCalcTime;
+	private double calcTimeMod;
 	//private int range;
 	
-	public JumpShip(int x, int y, Faction faction, String name, double baseCalcTime) {
-		super(x, y, faction, name);
-		this.baseCalcTime = baseCalcTime;
+	public JumpShip(int x, int y, int upkeep, Faction faction, String name, double calcTimeMod, int health) {
+		super(x, y, upkeep, faction, name, health);
+		this.calcTimeMod = calcTimeMod;
 		//this.range = range;
+		this.hasDecrementedThisTurn = false;
+		turnsToJump = -1;
+	}
+	
+	public JumpShip(int[] coordinates, Faction faction, String name, int upkeep, int health, int cargoSpace, double calcTimeMod, int[] weapons, int[] defenses){
+		super(coordinates, faction, name, upkeep, health, cargoSpace, weapons, defenses);
+		this.calcTimeMod = calcTimeMod;
 		this.hasDecrementedThisTurn = false;
 		turnsToJump = -1;
 	}
@@ -27,8 +33,8 @@ public class JumpShip extends Ship{
 		return hasDecrementedThisTurn;
 	}
 	
-	public double getBaseCalcTime(){
-		return baseCalcTime;
+	public double getCalcTimeMod(){
+		return calcTimeMod;
 	}
 	
 	public int getTurnsToJump(){
