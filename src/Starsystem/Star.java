@@ -11,7 +11,7 @@ public class Star extends Selectable{
 	private String name;
 	private Planet planets[];
 	
-	private int shipyardLevel = 1;
+	private int shipyardLevel;
 	private double prosperity;
 	
 	/**
@@ -24,9 +24,10 @@ public class Star extends Selectable{
 	 */
 	public Star( int x, int y, String name, Planet... planets){
 		super(x,y);
-		this.name    = name;
-		this.planets = planets;
-		prosperity = 0;
+		this.name     = name;
+		this.planets  = planets;
+		prosperity    = 0;
+		shipyardLevel = 0;
 	}
 	
 	/**
@@ -40,11 +41,12 @@ public class Star extends Selectable{
 	 */
 	public Star( int x, int y, Faction faction, String name, Planet... planets){
 		super(x,y);
-		this.faction = faction;
-		this.name    = name;
-		this.planets = planets;
+		this.faction  = faction;
+		this.name     = name;
+		this.planets  = planets;
 		faction.addStar(this);
-		prosperity = 1;
+		prosperity    = 1;
+		shipyardLevel = 1;
 	}
 	
 	public WarpShip buildShip(int speed, String name, int[] weapons, int[] defenses, int health, int cargoSize){
@@ -99,10 +101,6 @@ public class Star extends Selectable{
 	public Planet[] getPlanets() {
 		return planets;
 	}
-	
-	public int shipyardLevel(){
-		return shipyardLevel;
-	}
 
 	public double getProsperity() {
 		return prosperity;
@@ -114,5 +112,9 @@ public class Star extends Selectable{
 
 	public double getIncome() {
 		return getPopulation() * prosperity * faction.getTaxRate();
+	}
+
+	public int getShipyardLevel() {
+		return shipyardLevel;
 	}
 }

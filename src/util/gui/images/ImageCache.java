@@ -19,6 +19,9 @@ public class ImageCache {
 	private Image buttonBRHighlight;
 	private Image buttonBL;
 	
+	private Image plus;
+	private Image minus;
+	
 	private Image[] galaxies;
 	private Image blueStar;
 	private Image blueStarS;
@@ -49,6 +52,9 @@ public class ImageCache {
 		galaxies[1] = loadImage("Many_Spiral_Galaxy_S.png");
 		galaxies[2] = loadImage("Lenticular_Galaxy_S.png");
 		galaxies[3] = loadImage("Irregular_Galaxy_S.png");
+		
+		plus  = loadImage("plus.png");
+		minus = loadImage("minus.png");
 	}
 	
 	public void clearMenuImages(){
@@ -81,6 +87,14 @@ public class ImageCache {
 		}
 		
 		return image;
+	}
+	
+	public Image getMinus(){
+		return minus;
+	}
+	
+	public Image getPlus(){
+		return plus;
 	}
 	
 	public Image getTarget(){

@@ -14,6 +14,8 @@ public class Faction{
 	private double taxRate;
 	private double treasury;
 	
+	private double[] shipyardTechMods;
+	
 	public Faction(String name, boolean usesJump){
 		this.name = name;
 		this.usesJump = usesJump;
@@ -21,6 +23,17 @@ public class Faction{
 		ships = new ArrayList<Ship>();
 		taxRate = 0.25;
 		treasury = 1000;
+		shipyardTechMods = new double[10];
+		shipyardTechMods[0] = 2.1;
+		shipyardTechMods[1] = 1.1;
+		shipyardTechMods[2] = 1.1;
+		shipyardTechMods[3] = 10;
+		shipyardTechMods[4] = 1;
+		shipyardTechMods[5] = 1;
+		shipyardTechMods[6] = 1;
+		shipyardTechMods[7] = 1;
+		shipyardTechMods[8] = 1;
+		shipyardTechMods[9] = 1;
 	}
 	
 	public void setTaxRate(double taxRate){
@@ -58,6 +71,14 @@ public class Faction{
 			planetCount += star.getPlanets().length;
 		}
 		return planetCount;
+	}
+	
+	public void setShipyardTechMod(int index, double newValue){
+		shipyardTechMods[index] = newValue;
+	}
+	
+	public double[] getShipyardTechMods(){
+		return shipyardTechMods;
 	}
 	
 	public int getSystemCount(){

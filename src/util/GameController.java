@@ -115,8 +115,9 @@ public class GameController {
 				@Override
 				public void run() {
 					GUI.updateDisplay();
-					//TODO fix bug where this text gets set during turn change instead of population
-					GUI.getSideInfoLabels()[1].setText("Turns to jump: \t" + ((JumpShip)ship).getTurnsToJump());
+					if(GUI.getSelected() instanceof JumpShip){
+						GUI.getSideInfoLabels()[1].setText("Turns to jump: \t" + ((JumpShip)ship).getTurnsToJump());
+					}
 				}
 			});
 		}

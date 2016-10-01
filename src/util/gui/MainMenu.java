@@ -46,8 +46,6 @@ public class MainMenu extends Application{
 		primaryStage.setTitle("PLACEHOLDER");
 		primaryStage.show();
 		
-		
-		
 		primaryStage.setOnCloseRequest((event) -> {
 			System.exit(0);;
 		});

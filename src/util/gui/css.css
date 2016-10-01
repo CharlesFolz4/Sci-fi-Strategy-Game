@@ -1,0 +1,11 @@
+
+
+
+.scroll-pane > .viewport  { 
+	-fx-background-color: transparent;
+}
+
+.text-field {
+    -fx-background-color: #aaaaaa , white , white;
+    
+}

@@ -12,8 +12,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -22,6 +22,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -33,7 +34,7 @@ import util.Selectable;
 import util.audio.AudioCache;
 import util.gui.images.ImageCache;
 
-//TODO: Add attacking and building, fix turn click bug
+//TODO: Add attacking, building, colonizing
 //TODO: Add comprehensive javadoc
 public class GameGUI extends Application{
 	private ImageCache imageCache;
@@ -43,6 +44,7 @@ public class GameGUI extends Application{
 	private Selectable selected;
 	private ImageView targetMarker;
 	
+	private BorderPane subRoot;
 	private GridPane mapView;
 	private ImageView sideMenuImage;
 	private Label sideMenuTitle;
@@ -56,14 +58,12 @@ public class GameGUI extends Application{
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		BorderPane subRoot = new BorderPane();
-		subRoot.setStyle("-fx-background-color: transparent");
+		subRoot = new BorderPane();
 		StackPane centerPane = new StackPane();
 		centerPane.setStyle("-fx-background-color: transparent; -fx-border-width: 4; -fx-border-color: white;");
 		centerPane.prefHeightProperty().bind(subRoot.heightProperty());
 		
 		BorderPane utilPane = new BorderPane();
-		utilPane.setStyle("-fx-background-color: transparent");
 		HBox bottomRoot = new HBox();
 		bottomRoot.setAlignment(Pos.BASELINE_RIGHT);
 		bottomRoot.prefWidthProperty().bind(utilPane.widthProperty());
@@ -83,7 +83,6 @@ public class GameGUI extends Application{
 			nextHighlight.setVisible(false);
 		});
 		nextButton.setOnMouseClicked((event) -> {
-			System.out.println("Next clicked");
 			gameController.endFactionTurn();
 			updateSideMenu();
 		});
@@ -94,19 +93,18 @@ public class GameGUI extends Application{
 		bottomRoot.setStyle("-fx-background-color: transparent");
 
 		
-		centerPane.getChildren().addAll(utilPane, makeMapView());
-		centerPane.setPickOnBounds(false);
+		centerPane.getChildren().addAll(makeMapView(), utilPane);
 		subRoot.setCenter(centerPane);
 		VBox sideMenu = makeSideMenu();
 		sideMenu.prefHeightProperty().bind(subRoot.heightProperty());
-//		sideMenu.setTranslateY(210);
-//		sideMenu.setTranslateX(-70);
 		subRoot.setRight(sideMenu);
 		
-		StackPane root = new StackPane();
-		root.getChildren().addAll(new ImageView(imageCache.getBackground()), subRoot);
 		
-		primaryStage.setScene(new Scene(root));
+		subRoot.setStyle("-fx-background-image: url(/util/gui/images/Star_Background.png)");
+		Scene scene = new Scene(subRoot);
+		String css = this.getClass().getResource("/util/gui/css.css").toExternalForm();
+		scene.getStylesheets().add(css); 
+		primaryStage.setScene(scene);
 		primaryStage.getIcons().add(imageCache.getFlag());
 		primaryStage.setTitle("PLACEHOLDER");
 		//primaryStage.setFullScreen(true);
@@ -188,7 +186,7 @@ public class GameGUI extends Application{
 			}
 		});
 		topButton.setOnMouseClicked((event) -> {
-			topStateMachine();
+			topAction();
 		});
 		
 		StackPane middleButton = new StackPane();
@@ -210,6 +208,9 @@ public class GameGUI extends Application{
 				highlights[1].setVisible(false);
 			}
 		});
+		middleButton.setOnMouseClicked((event) -> {
+			middleAction();
+		});
 		
 		StackPane bottomButton = new StackPane();
 		bottomButton.getChildren().addAll(new ImageView(imageCache.getMenuButton()));
@@ -230,13 +231,11 @@ public class GameGUI extends Application{
 				highlights[2].setVisible(false);
 			}
 		});
-		
-		Button tempTurnButton = new Button("next");
-		tempTurnButton.setOnAction( (event) -> {
-			gameController.endFactionTurn();
-			updateSideMenu();
+		bottomButton.setOnMouseClicked((event) -> {
+			bottomAction();
 		});
-		actionBox.getChildren().addAll(topButton, middleButton, bottomButton, tempTurnButton);
+		
+		actionBox.getChildren().addAll(topButton, middleButton, bottomButton);
 		
 		root.setPadding(new Insets(25, 25, 0, 25));
 		root.setStyle("-fx-background-color: rgba(16, 16, 16, .75);" +
@@ -245,13 +244,31 @@ public class GameGUI extends Application{
 		return root;
 	}
 	
-	private void topStateMachine() {
+	
+	//TODO: Actions act differently depending on what is selected.
+	
+	private void topAction() {
+		
+		
 		if(selected instanceof Ship && !shipMoveFlag){
 			shipMoveFlag = true;
 		} else if (selected instanceof Ship && shipMoveFlag){
 			shipMoveFlag = false;
 		}
+		//TODO: finish implementing
+	}
+	
+	private void middleAction(){
+		//TODO: implement 
+	}
+	
+	private void bottomAction(){
 		
+		if(selected instanceof Star && ((Star) selected).getFaction().equals(gameController.getCurrentFaction())){
+			
+			
+			subRoot.setCenter(new Shipyard(imageCache, (Star)selected));
+		}
 	}
 
 	private void select(Selectable newSelected){
@@ -307,7 +324,7 @@ public class GameGUI extends Application{
 				sideInfoLabels[0].setText("Population cap: \t" + ((Star) selected).getPopCap());
 				sideInfoLabels[1].setText("Population: \t\tUninhabited");
 				sideInfoLabels[2].setText("Industry: \t\tNone");
-				sideInfoLabels[3].setText("Shipyard: \t\tNone");
+				sideInfoLabels[3].setText("Shipyard: \t\t" + ((Star) selected).getShipyardLevel());
 				sideInfoLabels[4].setText("Planets: \t\t" + ((Star) selected).getPlanets().length);
 			} else if (((Star) selected).getFaction() == gameController.getCurrentFaction()){
 				topLabel.setText("Manage");
@@ -371,26 +388,16 @@ public class GameGUI extends Application{
 	}
 	
 	private Node makeMapView() {
+		ScrollPane bigPane = new ScrollPane();
 		mapView = new GridPane();
-		final int[] dragX = new int[1];
-		final int[] dragY = new int[1];
-		
-		mapView.setOnMouseDragged((event) -> {
-			if(dragX[0] != 0){
-				mapView.setTranslateX( mapView.getTranslateX() + limit(event.getX() - dragX[0], 25));
-				mapView.setTranslateY( mapView.getTranslateY() + limit(event.getY() - dragY[0], 25));
-			}
-			dragX[0] = (int)event.getX();
-			dragY[0] = (int)event.getY();
-		});
+		mapView.setStyle("-fx-background-color: transparent");
 		
 		StackPane temp;
 		for(int x = 0; x < gameMap.getDimensions()[0]; ++x){
 			for(int y = 0; y < gameMap.getDimensions()[1]; ++y){
 				temp = new StackPane();
 				temp.setPrefSize(100, 100);
-				//temp.setMinSize(100, 100);
-				//TODO: make nodes not push each other/overlapping nodes
+				temp.setMinSize(100, 100);
 				temp.setStyle("-fx-background-color: transparent;" +
 						"-fx-border-width: 1 1 1 1; -fx-border-color: rgba(255, 255, 255, .125);");
 				Location location = gameMap.getMap()[x][y];
@@ -441,9 +448,8 @@ public class GameGUI extends Application{
 							});
 							pathFinderThread.start();
 						}
-						/*TODO
-						 * Fix bug where warp ship can be caught in infinite loop between two threads
-						 */
+						//TODOFix bug where warp ship can be caught in infinite loop between two threads
+						 
 						
 					} else if(event.getButton() == MouseButton.PRIMARY){
 						
@@ -491,8 +497,12 @@ public class GameGUI extends Application{
 				});
 			}
 		}
-		
-		return mapView;
+		bigPane.setContent(mapView);
+		bigPane.setPannable(true);
+		bigPane.setStyle("-fx-background-color: transparent");
+		bigPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		bigPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		return bigPane;
 	}
 
 	public GameGUI(){
@@ -539,5 +549,10 @@ public class GameGUI extends Application{
 	
 	public Label[] getSideInfoLabels() {
 		return sideInfoLabels;
+	}
+
+	
+	public Selectable getSelected() {
+		return selected;
 	}
 }
