@@ -81,11 +81,12 @@ public class GameController {
 		//TODO: This is where the faction AI will control their empires from
 	}
 	
+	
 	public void moveJumpShip(JumpShip ship){
 		if(!ship.hasDecrementedThisTurn()){
-			if(ship.getTurnsToJump() > 1) {
+			if(ship.getTurnsToJump() > 0) {
 				System.out.println("Doesn't jump this turn "  + ship.getTurnsToJump());
-				
+				ship.decrementTurnsToJump();
 			} else  { //if negative number, calculate new jump
 				int deltaX = ship.getDestination()[0] - ship.getCoordinates()[0];
 				int deltaY = ship.getDestination()[1] - ship.getCoordinates()[1];
@@ -94,7 +95,6 @@ public class GameController {
 				ship.setTurnsToJump(jumpTime);
 				System.out.println("Negative number, calculate new jump distance: " + ship.getTurnsToJump());
 			}
-			ship.decrementTurnsToJump();
 			if(ship.getTurnsToJump() == 0){
 				System.out.println("makes the jump "  + ship.getTurnsToJump());
 				if(map.getMap()[ship.getDestination()[0]][ship.getDestination()[1]] == null){
@@ -125,6 +125,10 @@ public class GameController {
 	
 	public Faction getCurrentFaction(){
 		return factions[currentFactionIndex];
+	}
+	
+	public void buildShip(Ship ship){
+		map.getMap()[ship.getCoordinates()[0]][ship.getCoordinates()[1]].addShip(ship);
 	}
 
 	public void moveWarpShip(WarpShip ship) {

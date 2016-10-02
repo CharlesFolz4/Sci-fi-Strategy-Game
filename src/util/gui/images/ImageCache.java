@@ -21,6 +21,14 @@ public class ImageCache {
 	
 	private Image plus;
 	private Image minus;
+	private Image loadShipButton;
+	private Image loadShipHighlight;
+	private Image saveShipButton;
+	private Image saveShipHighlight;
+	private Image buildShipButton;
+	private Image buildShipButtonHighlight;
+	private Image cancelShipyardButton;
+	private Image cancelShipyardHighlight;
 	
 	private Image[] galaxies;
 	private Image blueStar;
@@ -29,6 +37,31 @@ public class ImageCache {
 	private Image shipS;
 	private Image ship1;
 	private Image target;
+	
+	public void loadShipyardImages(){
+		plus  = loadImage("plus.png");
+		minus = loadImage("minus.png");
+
+		loadShipButton    = loadImage("Load_Ship_Template.png");
+		saveShipButton    = loadImage("Save_Ship_Template.png");
+		loadShipHighlight = loadImage("Load_Ship_Highlight.png");
+		saveShipHighlight = loadImage("Save_Ship_Highlight.png");
+
+		buildShipButton = loadImage("Build_Ship.png");
+		buildShipButtonHighlight = loadImage("Build_Ship_Highlight.png");
+		cancelShipyardButton = loadImage("Cancel_Shipyard.png");
+		cancelShipyardHighlight = loadImage("Cancel_Shipyard_Highlight.png");
+	}
+	
+	public void clearShipyardImages(){
+		plus  = null;
+		minus = null;
+		
+		loadShipButton    = null;
+		saveShipButton    = null;
+		loadShipHighlight = null;
+		saveShipHighlight = null;
+	}
 	
 	public void loadGameImages(){
 		background = loadImage("Star_Background.png");
@@ -52,9 +85,6 @@ public class ImageCache {
 		galaxies[1] = loadImage("Many_Spiral_Galaxy_S.png");
 		galaxies[2] = loadImage("Lenticular_Galaxy_S.png");
 		galaxies[3] = loadImage("Irregular_Galaxy_S.png");
-		
-		plus  = loadImage("plus.png");
-		minus = loadImage("minus.png");
 	}
 	
 	public void clearMenuImages(){
@@ -80,13 +110,29 @@ public class ImageCache {
 			input.close();
 		}catch(FileNotFoundException e){
 			System.out.println("File not found: " + imageName);
-			//e.printStackTrace();
+//			e.printStackTrace();
 		}catch(IOException e){
 			System.out.println("General exception");
-			//e.printStackTrace();
+//			e.printStackTrace();
 		}
 		
 		return image;
+	}
+	
+	public Image getCancelShipyardButton(){
+		return cancelShipyardButton;
+	}
+	
+	public Image getCancelShipyardHighlight(){
+		return cancelShipyardHighlight;
+	}
+	
+	public Image getBuildShipButton(){
+		return buildShipButton;
+	}
+	
+	public Image getBuildShipHighlight(){
+		return buildShipButtonHighlight;
 	}
 	
 	public Image getMinus(){
@@ -96,6 +142,21 @@ public class ImageCache {
 	public Image getPlus(){
 		return plus;
 	}
+
+	public Image getLoadShipButton(){
+		return loadShipButton;
+	}
+	public Image getLoadShipHighlight(){
+		return loadShipHighlight;
+	}
+	public Image getSaveShipButton(){
+		return saveShipButton;
+	}
+	public Image getSaveShipHighlight(){
+		return saveShipHighlight;
+	}
+	
+	
 	
 	public Image getTarget(){
 		return target;

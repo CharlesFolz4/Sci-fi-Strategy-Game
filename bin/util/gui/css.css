@@ -6,6 +6,29 @@
 }
 
 .text-field {
-    -fx-background-color: #aaaaaa , white , white;
+    -fx-background-color: #aaaaaa , red , black;
+    -fx-text-fill: white;
+    -fx-font-size: 18;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 10, 10;
     
+}
+
+.text-area .content{
+    -fx-background-color: #aaaaaa , black , black;
+    -fx-text-fill: white;
+    -fx-font-size: 18;
+    -fx-background-radius: 10, 10;
+}
+
+.text-area{
+    -fx-background-color: #aaaaaa , red , black;
+    -fx-text-fill: white;
+    -fx-font-size: 18;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 10, 10;
+}
+
+.text-area .scroll-bar:vertical:disabled {
+    -fx-opacity: 0;
 }

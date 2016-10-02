@@ -44,7 +44,7 @@ public class GameGUI extends Application{
 	private Selectable selected;
 	private ImageView targetMarker;
 	
-	private BorderPane subRoot;
+	private BorderPane root;
 	private GridPane mapView;
 	private ImageView sideMenuImage;
 	private Label sideMenuTitle;
@@ -58,50 +58,50 @@ public class GameGUI extends Application{
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		subRoot = new BorderPane();
-		StackPane centerPane = new StackPane();
-		centerPane.setStyle("-fx-background-color: transparent; -fx-border-width: 4; -fx-border-color: white;");
-		centerPane.prefHeightProperty().bind(subRoot.heightProperty());
-		
-		BorderPane utilPane = new BorderPane();
-		HBox bottomRoot = new HBox();
-		bottomRoot.setAlignment(Pos.BASELINE_RIGHT);
-		bottomRoot.prefWidthProperty().bind(utilPane.widthProperty());
-
-		
-		StackPane nextButton = new StackPane();
-		Label nextLabel = new Label("Next");
-		nextLabel.setStyle("-fx-font-size: 28");
-		nextLabel.setTextFill(Color.WHITE);
-		ImageView nextHighlight = new ImageView(imageCache.getButtonBRHighlight());
-		nextHighlight.setVisible(false);
-		nextButton.getChildren().addAll(new ImageView(imageCache.getButtonBR()), nextLabel, nextHighlight);
-		nextButton.setOnMouseEntered((event) -> {
-        	nextHighlight.setVisible(true);
-	    });
-		nextButton.setOnMouseExited((event) -> {
-			nextHighlight.setVisible(false);
-		});
-		nextButton.setOnMouseClicked((event) -> {
-			gameController.endFactionTurn();
-			updateSideMenu();
-		});
-		
-		bottomRoot.getChildren().addAll(nextButton);
-		utilPane.setBottom(bottomRoot);
-		utilPane.setPickOnBounds(false);
-		bottomRoot.setStyle("-fx-background-color: transparent");
-
-		
-		centerPane.getChildren().addAll(makeMapView(), utilPane);
-		subRoot.setCenter(centerPane);
+		root = new BorderPane();
+//		StackPane subRoot = new StackPane();
+//		subRoot.setStyle("-fx-background-color: transparent; -fx-border-width: 4; -fx-border-color: white;");
+//		subRoot.prefHeightProperty().bind(root.heightProperty());
+//		
+//		BorderPane utilPane = new BorderPane();
+//		HBox bottomRoot = new HBox();
+//		bottomRoot.setAlignment(Pos.BASELINE_RIGHT);
+//		bottomRoot.prefWidthProperty().bind(utilPane.widthProperty());
+//
+//		
+//		StackPane nextButton = new StackPane();
+//		Label nextLabel = new Label("Next");
+//		nextLabel.setStyle("-fx-font-size: 28");
+//		nextLabel.setTextFill(Color.WHITE);
+//		ImageView nextHighlight = new ImageView(imageCache.getButtonBRHighlight());
+//		nextHighlight.setVisible(false);
+//		nextButton.getChildren().addAll(new ImageView(imageCache.getButtonBR()), nextLabel, nextHighlight);
+//		nextButton.setOnMouseEntered((event) -> {
+//        	nextHighlight.setVisible(true);
+//	    });
+//		nextButton.setOnMouseExited((event) -> {
+//			nextHighlight.setVisible(false);
+//		});
+//		nextButton.setOnMouseClicked((event) -> {
+//			gameController.endFactionTurn();
+//			updateSideMenu();
+//		});
+//		
+//		bottomRoot.getChildren().addAll(nextButton);
+//		utilPane.setBottom(bottomRoot);
+//		utilPane.setPickOnBounds(false);
+//		bottomRoot.setStyle("-fx-background-color: transparent");
+//
+//		
+//		subRoot.getChildren().addAll(makeMapView(), utilPane);
+		root.setCenter(makeMapView());
 		VBox sideMenu = makeSideMenu();
-		sideMenu.prefHeightProperty().bind(subRoot.heightProperty());
-		subRoot.setRight(sideMenu);
+		sideMenu.prefHeightProperty().bind(root.heightProperty());
+		root.setRight(sideMenu);
 		
 		
-		subRoot.setStyle("-fx-background-image: url(/util/gui/images/Star_Background.png)");
-		Scene scene = new Scene(subRoot);
+		root.setStyle("-fx-background-image: url(/util/gui/images/Star_Background.png)");
+		Scene scene = new Scene(root);
 		String css = this.getClass().getResource("/util/gui/css.css").toExternalForm();
 		scene.getStylesheets().add(css); 
 		primaryStage.setScene(scene);
@@ -266,8 +266,8 @@ public class GameGUI extends Application{
 		
 		if(selected instanceof Star && ((Star) selected).getFaction().equals(gameController.getCurrentFaction())){
 			
+			root.setCenter(new Shipyard(imageCache, (Star)selected, gameController.getCurrentFaction(), this));
 			
-			subRoot.setCenter(new Shipyard(imageCache, (Star)selected));
 		}
 	}
 
@@ -301,7 +301,7 @@ public class GameGUI extends Application{
 			bottomLabel.setText("Patrol");
 			sideMenuTitle.setText(((Ship) selected).getName());
 			
-			sideInfoLabels[0].setText("HP: \t\t" + gameController.getCurrentFaction().getIncome());
+			sideInfoLabels[0].setText("HP: \t\t" + ((Ship) selected).getCurrentHealth() + "/" + ((Ship) selected).getMaxHealth());
 			sideInfoLabels[2].setText("Destination: \t(" + ((Ship) selected).getDestination()[0] + "," + ((Ship) selected).getDestination()[1] + ")");
 			sideInfoLabels[3].setText("Armament: \t\tN/A");
 			sideInfoLabels[4].setText("Defenses: \t\tN/A");
@@ -387,7 +387,43 @@ public class GameGUI extends Application{
 		return num;
 	}
 	
-	private Node makeMapView() {
+	public Node makeMapView() {
+		StackPane subRoot = new StackPane();
+		subRoot.setStyle("-fx-background-color: transparent; -fx-border-width: 4; -fx-border-color: white;");
+		subRoot.prefHeightProperty().bind(root.heightProperty());
+		
+		BorderPane utilPane = new BorderPane();
+		HBox bottomRoot = new HBox();
+		bottomRoot.setAlignment(Pos.BASELINE_RIGHT);
+		bottomRoot.prefWidthProperty().bind(utilPane.widthProperty());
+
+		
+		StackPane nextButton = new StackPane();
+		Label nextLabel = new Label("Next");
+		nextLabel.setStyle("-fx-font-size: 28");
+		nextLabel.setTextFill(Color.WHITE);
+		ImageView nextHighlight = new ImageView(imageCache.getButtonBRHighlight());
+		nextHighlight.setVisible(false);
+		nextButton.getChildren().addAll(new ImageView(imageCache.getButtonBR()), nextLabel, nextHighlight);
+		nextButton.setOnMouseEntered((event) -> {
+        	nextHighlight.setVisible(true);
+	    });
+		nextButton.setOnMouseExited((event) -> {
+			nextHighlight.setVisible(false);
+		});
+		nextButton.setOnMouseClicked((event) -> {
+			gameController.endFactionTurn();
+			updateSideMenu();
+		});
+		
+		bottomRoot.getChildren().addAll(nextButton);
+		utilPane.setBottom(bottomRoot);
+		utilPane.setPickOnBounds(false);
+		bottomRoot.setStyle("-fx-background-color: transparent");
+
+		
+		
+		
 		ScrollPane bigPane = new ScrollPane();
 		mapView = new GridPane();
 		mapView.setStyle("-fx-background-color: transparent");
@@ -502,7 +538,10 @@ public class GameGUI extends Application{
 		bigPane.setStyle("-fx-background-color: transparent");
 		bigPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		bigPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-		return bigPane;
+		
+		subRoot.getChildren().addAll(bigPane, utilPane);
+		
+		return subRoot;
 	}
 
 	public GameGUI(){
@@ -554,5 +593,13 @@ public class GameGUI extends Application{
 	
 	public Selectable getSelected() {
 		return selected;
+	}
+	
+	public GameController getGameController(){
+		return gameController;
+	}
+	
+	public BorderPane getRoot(){
+		return root;
 	}
 }

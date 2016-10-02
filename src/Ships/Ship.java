@@ -41,12 +41,17 @@ public abstract class Ship extends Selectable{
 		this.name       = name;
 		this.upkeep     = upkeep;
 		this.health     = health;
+		this.maxHealth  = health;
 		this.cargoSpace = cargoSpace;
 		this.cargoType  = "None";
 		this.cargoSize  = 0;
 		
 		this.weapons    = weapons;
 		this.defenses   = defenses;
+		
+		destination     = new int[2];
+		destination[0]  = coordinates[0];
+		destination[1]  = coordinates[1];
 		
 	}
 	
