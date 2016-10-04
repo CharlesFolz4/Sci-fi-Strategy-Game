@@ -267,26 +267,33 @@ public class Shipyard extends BorderPane{
 			}
 		});
 		buildButton.setOnMouseClicked((event) -> {
-			int[] coords       = selected.getCoordinates();
-			String shipName    = shipNameLabel.getText();
-			int hp             = Integer.parseInt(shipSystemStats[0].getText());
-			int cargoSpace     = Integer.parseInt(shipSystemStats[3].getText());
-			int[] weapons  = new int[3];
-			int[] defenses = new int[3];
-			
-			Ship ship;
-			if(currentFaction.usesJump()){
+			if(currentFaction.getTreasury() - cost >= 0){
+				System.out.println("Building ship");
+				int[] coords    = selected.getCoordinates();
+				String shipName = shipNameLabel.getText();
+				int hp          = Integer.parseInt(shipSystemStats[0].getText());
+				int engine      = Integer.parseInt(shipSystemStats[1].getText());
+				int cargoSpace  = Integer.parseInt(shipSystemStats[3].getText());
 				
-				double calcTimeMod = 1.0 / Integer.parseInt(shipSystemStats[1].getText());
-				ship = new JumpShip(coords, currentFaction, shipName, (int)upkeep, hp, cargoSpace, calcTimeMod, weapons, defenses);
-			}else{
-
-				int speed = Integer.parseInt(shipSystemStats[1].getText());
-				ship = new WarpShip(coords, currentFaction, shipName, (int)upkeep, hp, cargoSpace, speed, weapons, defenses);
+				int[] weapons  = {Integer.parseInt(weaponSystemStats[0].getText()), Integer.parseInt(weaponSystemStats[1].getText()), Integer.parseInt(weaponSystemStats[2].getText())};
+				int[] defenses = {Integer.parseInt(defenseSystemStats[0].getText()), Integer.parseInt(defenseSystemStats[1].getText()), Integer.parseInt(defenseSystemStats[2].getText())};
+				
+				Ship ship;
+				if(currentFaction.usesJump()){
+					
+					
+					ship = new JumpShip(coords, currentFaction, shipName, (int)upkeep, hp, cargoSpace, engine, weapons, defenses);
+				}else{
+					ship = new WarpShip(coords, currentFaction, shipName, (int)upkeep, hp, cargoSpace, engine, weapons, defenses);
+				}
+				
+				gameGUI.getGameController().buildShip(ship);
+				
+				currentFaction.addToTreasury(-cost);
+				closeShipyard();
+			} else {
+				System.out.println("Not building ship");
 			}
-			
-			gameGUI.getGameController().buildShip(ship);
-			closeShipyard();
 		});
 		
 		StackPane cancelButton = new StackPane();

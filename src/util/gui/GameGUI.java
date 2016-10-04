@@ -22,7 +22,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -260,6 +259,11 @@ public class GameGUI extends Application{
 	
 	private void middleAction(){
 		//TODO: implement 
+		if(selected instanceof Star && ((Star) selected).getFaction().equals(gameController.getCurrentFaction())){
+			
+			root.setCenter(new OrbitingShipPane((Star)selected, this, imageCache,  gameMap.getMap()[selected.getCoordinates()[0]][selected.getCoordinates()[1]].getShips()));
+			
+		}
 	}
 	
 	private void bottomAction(){
@@ -303,12 +307,12 @@ public class GameGUI extends Application{
 			
 			sideInfoLabels[0].setText("HP: \t\t" + ((Ship) selected).getCurrentHealth() + "/" + ((Ship) selected).getMaxHealth());
 			sideInfoLabels[2].setText("Destination: \t(" + ((Ship) selected).getDestination()[0] + "," + ((Ship) selected).getDestination()[1] + ")");
-			sideInfoLabels[3].setText("Armament: \t\tN/A");
-			sideInfoLabels[4].setText("Defenses: \t\tN/A");
+			sideInfoLabels[3].setText("Armament: \t\t" + Arrays.toString(((Ship) selected).getWeapons()));
+			sideInfoLabels[4].setText("Defenses: \t\t" + Arrays.toString(((Ship) selected).getDefenses()));
 			if( selected instanceof WarpShip){
 				sideInfoLabels[1].setText("Movement: \t\t" + ((WarpShip)selected).getMovementRemaining() +"/" + ((WarpShip)selected).getSpeed());
 			} else {
-				sideInfoLabels[1].setText("Turns to jump: \t" + ((JumpShip)selected).getTurnsToJump());
+				sideInfoLabels[1].setText("Jump Radius: \t" + ((JumpShip)selected).getJumpRadius());
 				
 			}
 			
@@ -350,30 +354,39 @@ public class GameGUI extends Application{
 		}
 	}
 
+	//TODO: bug wherein target circle doesn't disappear during turnchange when a shipbsprite is on same square
 	public void updateDisplay(){
 		StackPane temp;
 		for(int x = 0; x < gameMap.getDimensions()[0]; ++x){
 			for(int y = 0; y < gameMap.getDimensions()[1]; ++y){
 				//System.out.println("testing " + x + "," + y);
-				try{
-					if(gameMap.getMap()[x][y] == null){
-						if(!((StackPane)getNodeByCoordinate(mapView, x, y)).getChildren().isEmpty()){
-							temp = (StackPane)getNodeByCoordinate(mapView, x, y);
+				if( gameMap.getMap()[x][y] == null ){ 
+					if( !((StackPane)getNodeByCoordinate(mapView, x, y)).getChildren().isEmpty() ){
+				
+						if(selected != null && selected instanceof Ship){
 							int[] coords = {x,y};
-							if (!Arrays.equals((((Ship)selected).getDestination()),(coords))){
-								temp.getChildren().clear();
+							
+							if(!Arrays.equals(((Ship)selected).getDestination(), coords)){
+								((StackPane)getNodeByCoordinate(mapView, x, y)).getChildren().clear();
 							}
+						} else {
+							((StackPane)getNodeByCoordinate(mapView, x, y)).getChildren().clear();
 						}
-					} else if (gameMap.getMap()[x][y].getShips() != null && (((StackPane)getNodeByCoordinate(mapView, x, y)).getChildren().isEmpty() || ((StackPane)getNodeByCoordinate(mapView, x, y)).getChildren().contains(targetMarker))){
-						((StackPane)getNodeByCoordinate(mapView, x, y)).getChildren().add(new ImageView(imageCache.getShipS()));
-						//System.out.println("added " + x + "," + y);
 					}
-				}catch(NullPointerException e){
-					e.printStackTrace();
-					System.out.println(x + "," + y);
-					System.out.println(gameMap.getMap()[x][y]);
-					break;
+				} else if (gameMap.getMap()[x][y].getShips() != null){
+					if((((StackPane)getNodeByCoordinate(mapView, x, y)).getChildren().isEmpty() || ((StackPane)getNodeByCoordinate(mapView, x, y)).getChildren().contains(targetMarker))){
+				
+						((StackPane)getNodeByCoordinate(mapView, x, y)).getChildren().add(new ImageView(imageCache.getShipS()));
+					
+					}
+				} else if (gameMap.getMap()[x][y].getShips() == null && (((StackPane)getNodeByCoordinate(mapView, x, y)).getChildren().size() > 1)){
+					temp = (StackPane)getNodeByCoordinate(mapView, x, y);
+					temp.getChildren().clear();
+					if(gameMap.getMap()[x][y].getStar() != null){
+						temp.getChildren().add(new ImageView(imageCache.getBlueStarS()));
+					}
 				}
+				
 			}
 		}
 	}
@@ -412,6 +425,8 @@ public class GameGUI extends Application{
 			nextHighlight.setVisible(false);
 		});
 		nextButton.setOnMouseClicked((event) -> {
+			selected = null;
+			updateDisplay();
 			gameController.endFactionTurn();
 			updateSideMenu();
 		});
@@ -448,7 +463,6 @@ public class GameGUI extends Application{
 				mapView.add(temp, x, y);
 				
 				temp.setOnMouseClicked((event) -> {
-					//System.out.println("Map clicked");
 					StackPane source = (StackPane)event.getSource();
 					int sourceX = GridPane.getColumnIndex(source);
 					int sourceY = GridPane.getRowIndex(source);
@@ -456,29 +470,45 @@ public class GameGUI extends Application{
 					Location target = gameMap.getMap()[sourceX][sourceY];
 					
 					if(event.getButton() == MouseButton.SECONDARY || shipMoveFlag){
-						System.out.println("MOVING OR RMB");
+//						System.out.println("MOVING OR RMB");
 						shipMoveFlag = false;
 						
 						if(selected instanceof Ship && ((Ship) selected).getFaction() == gameController.getCurrentFaction()){
-							System.out.println("before");
 							try{
 								source.getChildren().add(targetMarker);
 							}catch(IllegalArgumentException e){
 								//duplicate children attempted to add itself
 							}
-							System.out.println("source(" + sourceX + "," + sourceY + ")\n");
+//							System.out.println("source(" + sourceX + "," + sourceY + ")\n");
 							
 							((Ship)selected).setDestination(sourceX, sourceY);
 							
 							sideInfoLabels[2].setText("Destination: \t(" + sourceX + "," + sourceY + ")");
+
 							
+							if(gameMap.getMap()[sourceX][sourceY] != null){
+								System.out.println("1");
+								for(Ship locationShip : gameMap.getMap()[sourceX][sourceY].getShips()){
+
+									System.out.println("2");
+									if(!locationShip.getFaction().equals(((Ship) selected).getFaction())){
+										System.out.println("3");
+										System.out.println("X: " + (((Ship)selected).getCoordinates()[0] - sourceX));
+										System.out.println("Y: " + (((Ship)selected).getCoordinates()[1] - sourceY));
+										if(Math.abs(((Ship)selected).getCoordinates()[0] - sourceX) <= 1 && Math.abs(((Ship)selected).getCoordinates()[1] - sourceY) <= 1){
+											System.out.println("4");//in range to attack, and hostile ship is present
+											gameController.attackShip((Ship) selected, locationShip);
+										}
+									}
+								}
+							}
+							
+							//TODO:  Sometimes jump ships don't jump?
 							Thread pathFinderThread = new Thread( () -> {
 								if(selected instanceof WarpShip){
 									gameController.moveWarpShip((WarpShip)selected);
-									//System.out.println("Warp ship");
 								} else if (selected instanceof JumpShip ){
 									gameController.moveJumpShip((JumpShip)selected);
-									//System.out.println("It's a jump ship!");
 								}
 								return;
 							});

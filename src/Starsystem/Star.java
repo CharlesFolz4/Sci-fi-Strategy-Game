@@ -49,20 +49,18 @@ public class Star extends Selectable{
 		shipyardLevel = 1;
 	}
 	
-	public WarpShip buildShip(int speed, String name, int[] weapons, int[] defenses, int health, int cargoSize){
+	public Ship buildShip(boolean isJump, int engine, String name, int[] weapons, int[] defenses, int health, int cargoSize){
 		int total = weapons[0] + weapons[1] + weapons[2] + defenses[0] + defenses[1] + defenses[2];
 		int upkeep = total/4;
-		upkeep += speed/5;
-		WarpShip ship = new WarpShip(this.getCoordinates(), this.faction, name, upkeep, health, cargoSize, speed, weapons, defenses);
-		return ship;
-	}
-	
-	public JumpShip buildShip(double calcTimeMod, String name, int[] weapons, int[] defenses, int health, int cargoSize){
-		int total = weapons[0] + weapons[1] + weapons[2] + defenses[0] + defenses[1] + defenses[2];
-		int upkeep = total/4;
-		upkeep += 0.2/calcTimeMod + 1;
+		upkeep += engine/5;
 		
-		JumpShip ship = new JumpShip(this.getCoordinates(), this.faction, name, upkeep, health, cargoSize, calcTimeMod, weapons, defenses);
+		Ship ship;
+		if(isJump){
+			ship = new JumpShip(this.getCoordinates(), this.faction, name, upkeep, health, cargoSize, engine, weapons, defenses);
+			
+		}else{
+			ship = new WarpShip(this.getCoordinates(), this.faction, name, upkeep, health, cargoSize, engine, weapons, defenses);
+		}
 		
 		return ship;
 	}

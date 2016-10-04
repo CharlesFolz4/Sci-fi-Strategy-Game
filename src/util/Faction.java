@@ -24,7 +24,7 @@ public class Faction{
 		stars = new ArrayList<Star>();
 		ships = new ArrayList<Ship>();
 		taxRate = 0.25;
-		treasury = 1000;
+		treasury = 2000;
 		
 		shipyardTechMods = new double[11];
 		shipyardTechMods[0] = 2.1;

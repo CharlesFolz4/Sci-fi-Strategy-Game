@@ -9,7 +9,7 @@ import java.io.InputStream;
 import javafx.scene.image.Image;
 
 public class ImageCache {
-	private String path = "src" + File.separator + "util" + File.separator + "gui" + File.separator + "images" + File.separator;
+	private String path = "bin" + File.separator + "util" + File.separator + "gui" + File.separator + "images" + File.separator;
 	
 	private Image flag;
 	private Image background;
@@ -38,6 +38,7 @@ public class ImageCache {
 	private Image ship1;
 	private Image target;
 	
+	//TODO note- background loads from inline css fine
 	public void loadShipyardImages(){
 		plus  = loadImage("plus.png");
 		minus = loadImage("minus.png");
@@ -101,7 +102,7 @@ public class ImageCache {
 		Image image = null;
 		//path = ImageCache.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		//path += File.separator + "util" + File.separator + "gui" + File.separator + "images" + File.separator;
-		//System.out.println(path);
+//		System.out.println(path + imageName);
 		File imageFile    = new File(path + imageName);
 		InputStream input = null;
 		try{
@@ -109,7 +110,7 @@ public class ImageCache {
 			image = new Image(input);
 			input.close();
 		}catch(FileNotFoundException e){
-			System.out.println("File not found: " + imageName);
+			System.out.println("File not found: " + imageName + "\n");
 //			e.printStackTrace();
 		}catch(IOException e){
 			System.out.println("General exception");

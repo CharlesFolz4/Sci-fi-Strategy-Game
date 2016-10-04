@@ -30,6 +30,8 @@ public abstract class Ship extends Selectable{
 		this.faction.addShip(this);
 		this.maxHealth = health;
 		this.health    = health;
+		this.weapons   = new int[3];
+		this.defenses  = new int[3];
 		destination    = new int[2];
 		destination[0] = x;
 		destination[1] = y;
@@ -53,6 +55,8 @@ public abstract class Ship extends Selectable{
 		destination[0]  = coordinates[0];
 		destination[1]  = coordinates[1];
 		
+		
+		this.faction.addShip(this);
 	}
 	
 	public void emptyCargo(){
@@ -89,7 +93,10 @@ public abstract class Ship extends Selectable{
 	}
 	
 	public void takeDamage(int damage){
+		System.out.println("health: " + health);
+		System.out.println("damage: " + damage);
 		health -= damage;
+		System.out.println("remaining: " + health);
 	}
 
 	public Faction getFaction(){
