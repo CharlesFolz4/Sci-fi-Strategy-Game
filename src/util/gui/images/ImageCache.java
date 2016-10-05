@@ -43,10 +43,11 @@ public class ImageCache {
 		plus  = loadImage("plus.png");
 		minus = loadImage("minus.png");
 
-		loadShipButton    = loadImage("Load_Ship_Template.png");
-		saveShipButton    = loadImage("Save_Ship_Template.png");
-		loadShipHighlight = loadImage("Load_Ship_Highlight.png");
-		saveShipHighlight = loadImage("Save_Ship_Highlight.png");
+		//not implemented yet
+//		loadShipButton    = loadImage("Load_Ship_Template.png");
+//		saveShipButton    = loadImage("Save_Ship_Template.png");
+//		loadShipHighlight = loadImage("Load_Ship_Highlight.png");
+//		saveShipHighlight = loadImage("Save_Ship_Highlight.png");
 
 		buildShipButton = loadImage("Build_Ship.png");
 		buildShipButtonHighlight = loadImage("Build_Ship_Highlight.png");
@@ -62,6 +63,16 @@ public class ImageCache {
 		saveShipButton    = null;
 		loadShipHighlight = null;
 		saveShipHighlight = null;
+	}
+	
+	public void loadOrbitalShipsImages(){
+		plus  = loadImage("plus.png");
+		minus = loadImage("minus.png");
+	}
+	
+	public void clearOrbitalShipsImages(){
+		plus  = null;
+		minus = null;
 	}
 	
 	public void loadGameImages(){

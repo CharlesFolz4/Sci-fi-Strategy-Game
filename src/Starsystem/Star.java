@@ -78,6 +78,44 @@ public class Star extends Selectable{
 			planet.growPopulation(rate);
 		}
 	}
+	
+	public void changePopulation(int totalChange){
+		if(totalChange > 0){ //if positive
+			while(totalChange > 0){
+				boolean popMaxed = true;
+				for(Planet planet : planets){
+					//add until popCap is reached, 
+					//then try to fill extra on other planets in the system, 
+					//then spread them evenly
+					if(planet.getPopCap() > planet.getPopulation()){//if there's room
+						planet.setPopulation(planet.getPopulation() + 1);
+						totalChange--;
+					} 
+					popMaxed &= planet.getPopulation() >= planet.getPopCap();
+				}
+				if(popMaxed){
+					for(Planet planet : planets){
+						planet.setPopulation(planet.getPopulation() + 1);
+						totalChange--;
+					}
+				}
+			}
+		} else if (totalChange < 0){ //if negative
+			while(totalChange < 0){
+				boolean flag = true;
+				for(Planet planet : planets){
+					if(planet.getPopulation() > 0){
+						planet.setPopulation(planet.getPopulation() - 1);
+						totalChange++;
+					} 
+					flag &= !(planet.getPopulation() > 0);
+				}
+				if(flag){
+					break;
+				}
+			}
+		}
+	}
 
 	public int getPopulation() {
 		int popCount = 0;
@@ -114,5 +152,9 @@ public class Star extends Selectable{
 
 	public int getShipyardLevel() {
 		return shipyardLevel;
+	}
+
+	public void setFaction(Faction faction) {
+		this.faction = faction;
 	}
 }

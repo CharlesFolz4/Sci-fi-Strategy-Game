@@ -51,6 +51,7 @@ public class GameGUI extends Application{
 	private Label topLabel;
 	private Label middleLabel;
 	private Label bottomLabel;
+	private StackPane cancelButton;
 	
 	private boolean shipMoveFlag;
 	
@@ -128,7 +129,7 @@ public class GameGUI extends Application{
 	}
 
 	private VBox makeSideMenu() {
-		VBox root = new VBox(15);
+		VBox root = new VBox(10);
 		
 		VBox infoBox = new VBox();
 		infoBox.setAlignment(Pos.CENTER);
@@ -159,7 +160,7 @@ public class GameGUI extends Application{
 		
 		VBox actionBox = new VBox(20);
 		
-		ImageView[] highlights = new ImageView[3];
+		ImageView[] highlights = new ImageView[4];
 		for(int i = 0; i < highlights.length; ++i){
 			highlights[i] = new ImageView(imageCache.getMenuButtonHighlight());
 			highlights[i].setVisible(false);
@@ -234,7 +235,32 @@ public class GameGUI extends Application{
 			bottomAction();
 		});
 		
-		actionBox.getChildren().addAll(topButton, middleButton, bottomButton);
+		cancelButton = new StackPane();
+		cancelButton.setVisible(false);
+		cancelButton.getChildren().addAll(new ImageView(imageCache.getMenuButton()));
+		cancelButton.getChildren().add(highlights[3]);
+		Label cancelLabel = new Label("Cancel");
+		cancelLabel.setStyle("-fx-font-size: 40;");
+		cancelLabel.setTextFill(Color.WHITE);
+		cancelButton.getChildren().add(cancelLabel);
+		cancelButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
+	        @Override
+	        public void handle(MouseEvent t) {
+	        	highlights[3].setVisible(true);
+	        }
+	    });
+		cancelButton.setOnMouseExited(new EventHandler<MouseEvent>(){
+			@Override
+			public void handle(MouseEvent event) {
+				highlights[3].setVisible(false);
+			}
+		});
+		cancelButton.setOnMouseClicked((event) -> {
+			this.root.setCenter(makeMapView());
+			cancelButton.setVisible(false);
+		});
+		
+		actionBox.getChildren().addAll(topButton, middleButton, bottomButton, cancelButton);
 		
 		root.setPadding(new Insets(25, 25, 0, 25));
 		root.setStyle("-fx-background-color: rgba(16, 16, 16, .75);" +
@@ -248,19 +274,30 @@ public class GameGUI extends Application{
 	
 	private void topAction() {
 		
-		
-		if(selected instanceof Ship && !shipMoveFlag){
+		if(selected instanceof Star && ((Star)selected).getFaction() == null && gameMap.getMap()[selected.getCoordinates()[0]][selected.getCoordinates()[1]].getShips() != null){
+			//Colonization!
+			for(Ship ship : gameMap.getMap()[selected.getCoordinates()[0]][selected.getCoordinates()[1]].getShips()){
+				if(ship.getFaction().equals(gameController.getCurrentFaction())){
+					((Star)selected).changePopulation(ship.getCargoPeople());
+					ship.setCargoPeople(0);
+					((Star)selected).setFaction(gameController.getCurrentFaction());
+					gameController.getCurrentFaction().addStar((Star) selected);
+				}
+			}
+			
+		} else if(selected instanceof Ship && !shipMoveFlag){
 			shipMoveFlag = true;
 		} else if (selected instanceof Ship && shipMoveFlag){
 			shipMoveFlag = false;
-		}
+		} 
 		//TODO: finish implementing
 	}
 	
 	private void middleAction(){
 		//TODO: implement 
 		if(selected instanceof Star && ((Star) selected).getFaction().equals(gameController.getCurrentFaction())){
-			
+
+			cancelButton.setVisible(true);
 			root.setCenter(new OrbitingShipPane((Star)selected, this, imageCache,  gameMap.getMap()[selected.getCoordinates()[0]][selected.getCoordinates()[1]].getShips()));
 			
 		}
@@ -269,7 +306,8 @@ public class GameGUI extends Application{
 	private void bottomAction(){
 		
 		if(selected instanceof Star && ((Star) selected).getFaction().equals(gameController.getCurrentFaction())){
-			
+
+			cancelButton.setVisible(true);
 			root.setCenter(new Shipyard(imageCache, (Star)selected, gameController.getCurrentFaction(), this));
 			
 		}
@@ -485,19 +523,19 @@ public class GameGUI extends Application{
 							
 							sideInfoLabels[2].setText("Destination: \t(" + sourceX + "," + sourceY + ")");
 
-							
-							if(gameMap.getMap()[sourceX][sourceY] != null){
-								System.out.println("1");
-								for(Ship locationShip : gameMap.getMap()[sourceX][sourceY].getShips()){
 
-									System.out.println("2");
-									if(!locationShip.getFaction().equals(((Ship) selected).getFaction())){
-										System.out.println("3");
-										System.out.println("X: " + (((Ship)selected).getCoordinates()[0] - sourceX));
-										System.out.println("Y: " + (((Ship)selected).getCoordinates()[1] - sourceY));
-										if(Math.abs(((Ship)selected).getCoordinates()[0] - sourceX) <= 1 && Math.abs(((Ship)selected).getCoordinates()[1] - sourceY) <= 1){
-											System.out.println("4");//in range to attack, and hostile ship is present
-											gameController.attackShip((Ship) selected, locationShip);
+							if(gameMap.getMap()[sourceX][sourceY] != null){
+								if(gameMap.getMap()[sourceX][sourceY].getShips() != null){
+									for(Ship locationShip : gameMap.getMap()[sourceX][sourceY].getShips()){
+										if(!locationShip.getFaction().equals(((Ship) selected).getFaction())){
+											if(Math.abs(((Ship)selected).getCoordinates()[0] - sourceX) <= 1 && Math.abs(((Ship)selected).getCoordinates()[1] - sourceY) <= 1){
+												//in range to attack, and hostile ship is present
+												Thread fightThread = new Thread( () -> {
+													gameController.attackShip((Ship) selected, locationShip);
+													return;
+												});
+												fightThread.start();
+											}
 										}
 									}
 								}
@@ -627,6 +665,10 @@ public class GameGUI extends Application{
 	
 	public GameController getGameController(){
 		return gameController;
+	}
+	
+	public StackPane getCancelButton(){
+		return cancelButton;
 	}
 	
 	public BorderPane getRoot(){

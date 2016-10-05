@@ -332,6 +332,7 @@ public class Shipyard extends BorderPane{
 	private void closeShipyard() {
 		imageCache.clearShipyardImages();
 		gameGUI.getRoot().setCenter(gameGUI.makeMapView());
+		gameGUI.getCancelButton().setVisible(false);
 		gameGUI.updateDisplay();
 	}
 

@@ -31,6 +31,13 @@ public class Planet {
 			population = popCap;
 		}
 	}
+	
+	public void setPopulation(double pop){
+		population = pop;
+		if(population < 0){
+			population = 0; //can't have population less than 0
+		}
+	}
 
 	public double getPopulation() {
 		return population;

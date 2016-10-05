@@ -13,14 +13,13 @@ public abstract class Ship extends Selectable{
 	
 	private int health;
 	private int maxHealth;
-	private int supplies;
 	private int sensorRange;
 	
 	private int[] weapons;
 	private int[] defenses;
 	private int cargoSpace;
-	private String cargoType;
-	private int cargoSize;
+	private double supplies;
+	private int cargoPeople; //1 population unit takes 2 cargo spaces? >45 pop for min pop growth, need ~100 cargo spaces for colony ship
 	
 	public Ship(int x, int y, int upkeep, Faction faction, String name, int health){
 		super(x, y);
@@ -45,8 +44,7 @@ public abstract class Ship extends Selectable{
 		this.health     = health;
 		this.maxHealth  = health;
 		this.cargoSpace = cargoSpace;
-		this.cargoType  = "None";
-		this.cargoSize  = 0;
+		this.supplies   = cargoSpace;
 		
 		this.weapons    = weapons;
 		this.defenses   = defenses;
@@ -57,27 +55,31 @@ public abstract class Ship extends Selectable{
 		
 		
 		this.faction.addShip(this);
+		this.cargoPeople = 0;
 	}
 	
-	public void emptyCargo(){
-		cargoType = "none";
-		cargoSize = 0;
+	public int getCargoSpaceRemaining(){
+		return cargoSpace - (int)(supplies + 2*cargoPeople);
 	}
 	
-	public void addCargo(int amount){
-		cargoSize += amount;
+	public int getCargoPeople(){
+		return cargoPeople;
 	}
 	
-	public void setCargoType(String cargoType){
-		this.cargoType = cargoType;
+	public void setCargoPeople(int amount){
+		cargoPeople = amount;
 	}
 	
-	public int getCargoSize(){
-		return cargoSize;
+	public void setSupplies(double amount){
+		supplies = amount;
 	}
 	
-	public String getCargoType(){
-		return cargoType;
+	public void useSupplies(double amountUsed){
+		supplies -= amountUsed;
+	}
+	
+	public double getSupplies(){
+		return supplies;
 	}
 	
 	public int getCargoSpace(){
@@ -126,6 +128,11 @@ public abstract class Ship extends Selectable{
 	
 	public int[] getDefenses(){
 		return defenses;
+	}
+
+	public void repair() {
+		health = maxHealth;
+		
 	}
 	
 }
