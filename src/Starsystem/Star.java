@@ -14,6 +14,8 @@ public class Star extends Selectable{
 	private int shipyardLevel;
 	private double prosperity;
 	
+	private int soldiers;
+	
 	/**
 	 * Constructor for uninhabited system
 	 * 
@@ -47,6 +49,7 @@ public class Star extends Selectable{
 		faction.addStar(this);
 		prosperity    = 1;
 		shipyardLevel = 1;
+		soldiers = 100;
 	}
 	
 	public Ship buildShip(boolean isJump, int engine, String name, int[] weapons, int[] defenses, int health, int cargoSize){
@@ -65,11 +68,23 @@ public class Star extends Selectable{
 		return ship;
 	}
 	
+	public void setSoldiers(int soldiers){
+		this.soldiers = soldiers;
+	}
+	
+	public void addSoldiers(int amount){
+		this.soldiers += amount;
+	}
+	
+	public int getSoldiers(){
+		return soldiers;
+	}
+	
 	public String getName(){
 		return name;
 	}
 
-	public Object getFaction() {
+	public Faction getFaction() {
 		return faction;
 	}
 	

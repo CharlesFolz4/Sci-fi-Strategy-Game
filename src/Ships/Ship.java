@@ -19,7 +19,8 @@ public abstract class Ship extends Selectable{
 	private int[] defenses;
 	private int cargoSpace;
 	private double supplies;
-	private int cargoPeople; //1 population unit takes 2 cargo spaces? >45 pop for min pop growth, need ~100 cargo spaces for colony ship
+	private int cargoPeople; //1 population unit takes 2 cargo spaces?
+	private int soldiers;
 	
 	public Ship(int x, int y, int upkeep, Faction faction, String name, int health){
 		super(x, y);
@@ -58,8 +59,18 @@ public abstract class Ship extends Selectable{
 		this.cargoPeople = 0;
 	}
 	
+	
+	
 	public int getCargoSpaceRemaining(){
-		return cargoSpace - (int)(supplies + 2*cargoPeople);
+		return cargoSpace - (int)(supplies + 2*cargoPeople + 4*soldiers);
+	}
+	
+	public int getSoldiers(){
+		return soldiers;
+	}
+	
+	public void setSoldiers(int soldiers){
+		this.soldiers = soldiers;
 	}
 	
 	public int getCargoPeople(){

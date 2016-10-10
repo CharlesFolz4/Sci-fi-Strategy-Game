@@ -283,7 +283,7 @@ public class OrbitingShipPane extends BorderPane {
 		
 		
 		Label shipPeopleLabel = new Label("  " + ship.getCargoPeople());
-		Label populationLabel = new Label("\tPeople: ");
+		Label populationLabel = new Label("\tCivilians: ");
 		populationLabel.setStyle("-fx-font-size: 18;");
 		populationLabel.setTextFill(Color.WHITE);
 		temp = new Pane(populationLabel);
@@ -326,10 +326,6 @@ public class OrbitingShipPane extends BorderPane {
 		incrementCargoPeople.setTranslateY(8);
 		temp = new Pane(incrementCargoPeople);
 		temp.setOnMouseClicked((event) -> {
-			
-			
-			
-			
 			if(ship.getCargoSpaceRemaining() > 0 && star.getPopulation() > 0){
 				star.changePopulation(-1);
 				ship.setCargoPeople(ship.getCargoPeople() + 1);
@@ -355,6 +351,93 @@ public class OrbitingShipPane extends BorderPane {
 		root.add(temp, 7, 4);
 		
 		
+		
+		
+		
+		
+		Label shipSoldiersLabel = new Label("  " + ship.getSoldiers());
+		Label soldiersLabel = new Label("\tSoldiers: ");
+		soldiersLabel.setStyle("-fx-font-size: 18;");
+		soldiersLabel.setTextFill(Color.WHITE);
+		temp = new Pane(soldiersLabel);
+		root.add(temp, 2, 5);
+		ImageView unloadSoldiers = new ImageView(imageCache.getMinus());
+		unloadSoldiers.setTranslateX(8);
+		unloadSoldiers.setTranslateY(8);
+		temp = new Pane(unloadSoldiers);
+		temp.setOnMouseClicked((event) -> {
+			if(ship.getSoldiers() > 0){
+				System.out.println("A");
+				star.addSoldiers(ship.getSoldiers());
+				ship.setSoldiers(0);
+				shipSoldiersLabel.setText("" + ship.getSoldiers());
+				shipCargoLabel.setText("" + (ship.getCargoSpace() - ship.getCargoSpaceRemaining()));
+			}
+		});
+		temp.setPrefWidth(28);
+		root.add(temp, 3, 5);
+		ImageView decrementSoldiers = new ImageView(imageCache.getMinus());
+		decrementSoldiers.setTranslateX(8);
+		decrementSoldiers.setTranslateY(8);
+		temp = new Pane(decrementSoldiers);
+		temp.setOnMouseClicked((event) -> {
+			if(ship.getSoldiers() > 0){
+				System.out.println("B");
+				star.addSoldiers(1);
+				ship.setSoldiers(ship.getSoldiers() - 1);
+				shipSoldiersLabel.setText("" + ship.getSoldiers());
+				shipCargoLabel.setText("" + (ship.getSoldiers() - ship.getCargoSpaceRemaining()));
+			}
+		});
+		temp.setPrefWidth(28);
+		root.add(temp, 4, 5);
+		
+		shipSoldiersLabel.setStyle("-fx-font-size: 18;");
+		shipSoldiersLabel.setTextFill(Color.WHITE);
+		temp = new Pane(shipSoldiersLabel);
+		root.add(temp, 5, 5);
+		ImageView incrementSoldiers = new ImageView(imageCache.getPlus());
+		incrementSoldiers.setTranslateX(8);
+		incrementSoldiers.setTranslateY(8);
+		temp = new Pane(incrementSoldiers);
+		temp.setOnMouseClicked((event) -> {
+			if(ship.getCargoSpaceRemaining() > 0 && star.getSoldiers() > 0){
+				System.out.println("C");
+				star.addSoldiers(-1);
+				ship.setSoldiers(ship.getSoldiers() + 1);
+				shipSoldiersLabel.setText("" + ship.getSoldiers());
+				shipCargoLabel.setText("" + (ship.getCargoSpace() - ship.getCargoSpaceRemaining()));
+			}
+		});
+		temp.setPrefWidth(28);
+		root.add(temp, 6, 5);
+		ImageView fillSoldiers = new ImageView(imageCache.getPlus());
+		fillSoldiers.setTranslateX(8);
+		fillSoldiers.setTranslateY(8);
+		temp = new Pane(fillSoldiers);
+		temp.setOnMouseClicked((event) -> {
+			System.out.println(ship.getCargoSpaceRemaining());
+			System.out.println(star.getSoldiers());
+			System.out.println();
+			
+			
+			
+			if(ship.getCargoSpaceRemaining() > 0  && star.getSoldiers() > 0 ){
+				System.out.println("D");
+				if(star.getSoldiers() > ship.getCargoSpaceRemaining()/4){
+					star.addSoldiers(-ship.getCargoSpaceRemaining()/4);
+					ship.setSoldiers(ship.getCargoSpaceRemaining()/4 + ship.getSoldiers());
+				} else { //if cargo is bigger than soldiers
+					ship.setSoldiers(ship.getSoldiers() + star.getSoldiers());
+					star.setSoldiers(0);
+				}
+				shipSoldiersLabel.setText("" + ship.getSoldiers());
+				shipCargoLabel.setText("" + (ship.getCargoSpace() - ship.getCargoSpaceRemaining()));
+				
+			}
+		});
+		temp.setPrefWidth(28);
+		root.add(temp, 7, 5);
 		
 		
 		return root;

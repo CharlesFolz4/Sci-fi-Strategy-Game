@@ -368,6 +368,7 @@ public class Shipyard extends BorderPane{
 		shipBuildPane.add(shipSystemsLabelBox, 0, 1, 4, 1);
 		GridPane.setHgrow(shipSystemsLabelBox, Priority.ALWAYS);
 		
+		//TODO: Make shift +click go by increments of 5 or 10
 		Label[] shipSystems = {new Label("Hull:"), new Label("Propulsion:"), new Label("Sensors:"), new Label("Cargo:"), new Label("Hangars:")};
 		ImageView[] shipSystemsMinus = {new ImageView(imageCache.getMinus()), new ImageView(imageCache.getMinus()), new ImageView(imageCache.getMinus()), new ImageView(imageCache.getMinus()), new ImageView(imageCache.getMinus())};
 		shipSystemsPoints = new Label[5];

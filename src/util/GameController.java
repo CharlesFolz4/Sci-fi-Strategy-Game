@@ -76,10 +76,37 @@ public class GameController {
 		}
 	}
 	
+	//TODO: redo troop loss according to Lanchester's Laws
+	public void invadeSystem(Star targetSystem, int invadingSoldiers){
+		double defenderMilitia  = targetSystem.getPopulation() * (.25 * Math.random());
+		targetSystem.changePopulation(-(int)defenderMilitia);
+		double defendersoldiers = targetSystem.getSoldiers();
+		double defenderSoldierStrength = defendersoldiers * targetSystem.getFaction().getSoldering();
+		
+		double invadingSoldierStrength = invadingSoldiers * getCurrentFaction().getSoldering();
+		System.out.println("def: " + defenderMilitia);
+		System.out.println("atk: " + invadingSoldierStrength);
+		if(defenderMilitia + defenderSoldierStrength > invadingSoldierStrength){
+			double militiaPercentage = defenderMilitia / (defenderSoldierStrength + defenderMilitia);
+			defenderMilitia -= invadingSoldierStrength * militiaPercentage;
+			targetSystem.changePopulation((int)defenderMilitia);
+			defendersoldiers -= defendersoldiers / (defenderSoldierStrength + defenderMilitia);
+			targetSystem.setSoldiers((int)defendersoldiers);
+			System.out.println("defender wins");
+			//TODO defender faction morale boost
+		} else {
+			invadingSoldiers = (int)(invadingSoldiers - (defenderSoldierStrength + defenderMilitia));
+			targetSystem.setFaction(getCurrentFaction());
+			getCurrentFaction().addStar(targetSystem);
+			targetSystem.setSoldiers(invadingSoldiers);
+			//TODO attacker faction morale boost, defender faction moral penalty
+		}
+		
+		
+	}
+	
 	public void endFactionTurn(){
 		//move all unmoved ships of the faction that still need to move, reset stuff for next turn
-		
-		
 		if(factions[currentFactionIndex].getShips() != null){
 			for(Ship ship : factions[currentFactionIndex].getShips()){
 				if(!Arrays.equals(ship.getCoordinates(), ship.getDestination())){
@@ -104,6 +131,7 @@ public class GameController {
 		}
 		
 		//TODO: handle building queues and shipyards and stuff like that, 
+		
 		//and build the infrastructure to support that
 		
 		
@@ -112,6 +140,7 @@ public class GameController {
 			//final pop growth rate undecided
 			star.growPopulation(0.022);
 		}
+		factions[currentFactionIndex].setTroopCap( (int)Math.sqrt(factions[currentFactionIndex].getPopulation()));
 		
 		
 		currentFactionIndex = currentFactionIndex==(factions.length-2)? 0:++currentFactionIndex;

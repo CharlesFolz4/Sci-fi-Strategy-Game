@@ -57,48 +57,12 @@ public class GameGUI extends Application{
 	
 	
 	@Override
-	public void start(Stage primaryStage) throws Exception {
+	public void start(Stage primaryStage) {
 		root = new BorderPane();
-//		StackPane subRoot = new StackPane();
-//		subRoot.setStyle("-fx-background-color: transparent; -fx-border-width: 4; -fx-border-color: white;");
-//		subRoot.prefHeightProperty().bind(root.heightProperty());
-//		
-//		BorderPane utilPane = new BorderPane();
-//		HBox bottomRoot = new HBox();
-//		bottomRoot.setAlignment(Pos.BASELINE_RIGHT);
-//		bottomRoot.prefWidthProperty().bind(utilPane.widthProperty());
-//
-//		
-//		StackPane nextButton = new StackPane();
-//		Label nextLabel = new Label("Next");
-//		nextLabel.setStyle("-fx-font-size: 28");
-//		nextLabel.setTextFill(Color.WHITE);
-//		ImageView nextHighlight = new ImageView(imageCache.getButtonBRHighlight());
-//		nextHighlight.setVisible(false);
-//		nextButton.getChildren().addAll(new ImageView(imageCache.getButtonBR()), nextLabel, nextHighlight);
-//		nextButton.setOnMouseEntered((event) -> {
-//        	nextHighlight.setVisible(true);
-//	    });
-//		nextButton.setOnMouseExited((event) -> {
-//			nextHighlight.setVisible(false);
-//		});
-//		nextButton.setOnMouseClicked((event) -> {
-//			gameController.endFactionTurn();
-//			updateSideMenu();
-//		});
-//		
-//		bottomRoot.getChildren().addAll(nextButton);
-//		utilPane.setBottom(bottomRoot);
-//		utilPane.setPickOnBounds(false);
-//		bottomRoot.setStyle("-fx-background-color: transparent");
-//
-//		
-//		subRoot.getChildren().addAll(makeMapView(), utilPane);
 		root.setCenter(makeMapView());
 		VBox sideMenu = makeSideMenu();
 		sideMenu.prefHeightProperty().bind(root.heightProperty());
 		root.setRight(sideMenu);
-		
 		
 		root.setStyle("-fx-background-image: url(/util/gui/images/Star_Background.png)");
 		Scene scene = new Scene(root);
@@ -239,7 +203,7 @@ public class GameGUI extends Application{
 		cancelButton.setVisible(false);
 		cancelButton.getChildren().addAll(new ImageView(imageCache.getMenuButton()));
 		cancelButton.getChildren().add(highlights[3]);
-		Label cancelLabel = new Label("Cancel");
+		Label cancelLabel = new Label("Done");
 		cancelLabel.setStyle("-fx-font-size: 40;");
 		cancelLabel.setTextFill(Color.WHITE);
 		cancelButton.getChildren().add(cancelLabel);
@@ -270,10 +234,10 @@ public class GameGUI extends Application{
 	}
 	
 	
-	//TODO: Actions act differently depending on what is selected.
-	
 	private void topAction() {
-		
+		if(selected instanceof Star){
+			System.out.println(((Star) selected).getFaction());
+		}
 		if(selected instanceof Star && ((Star)selected).getFaction() == null && gameMap.getMap()[selected.getCoordinates()[0]][selected.getCoordinates()[1]].getShips() != null){
 			//Colonization!
 			for(Ship ship : gameMap.getMap()[selected.getCoordinates()[0]][selected.getCoordinates()[1]].getShips()){
@@ -285,7 +249,22 @@ public class GameGUI extends Application{
 				}
 			}
 			
-		} else if(selected instanceof Ship && !shipMoveFlag){
+		} else if(selected instanceof Star && !((Star)selected).getFaction().equals(gameController.getCurrentFaction())){
+			//invasion
+			if(gameMap.getMap()[selected.getCoordinates()[0]][selected.getCoordinates()[1]].getShips() != null){
+				
+				System.out.println("Invasion!");
+				int soldiers = 0;
+				for(Ship ship : gameMap.getMap()[selected.getCoordinates()[0]][selected.getCoordinates()[1]].getShips()){
+					if(ship.getFaction().equals(gameController.getCurrentFaction())){
+						soldiers += ship.getSoldiers();
+						ship.setSoldiers(0);
+					}
+				}
+				gameController.invadeSystem((Star) selected, soldiers);
+				select(selected);
+			}
+		}else if(selected instanceof Ship && !shipMoveFlag){
 			shipMoveFlag = true;
 		} else if (selected instanceof Ship && shipMoveFlag){
 			shipMoveFlag = false;

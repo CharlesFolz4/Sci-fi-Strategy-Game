@@ -18,6 +18,9 @@ public class Faction{
 	private double[] shipyardCostMods;
 	private double[] shipyardUpkeepMods;
 	
+	private double soldiering;
+	private int troopCap;
+	
 	public Faction(String name, boolean usesJump){
 		this.name = name;
 		this.usesJump = usesJump;
@@ -25,6 +28,7 @@ public class Faction{
 		ships = new ArrayList<Ship>();
 		taxRate = 0.25;
 		treasury = 2000;
+		soldiering = 4.0;
 		
 		shipyardTechMods = new double[11];
 		shipyardTechMods[0] = 2.1;
@@ -66,10 +70,25 @@ public class Faction{
 		shipyardUpkeepMods[10] = 0.25;
 	}
 	
+	public void setTroopCap(int cap){
+		this.troopCap = cap;
+	}
+	
+	public int getTroopCap(){
+		return troopCap;
+	}
+	
 	public void setTaxRate(double taxRate){
 		this.taxRate = taxRate;
 	}
 	
+	public void setSoldering(double soldiering){
+		this.soldiering = soldiering;
+	}
+	
+	public double getSoldering(){
+		return soldiering;
+	}
 	
 	public double getIncome() {
 		double income = 0;

@@ -52,13 +52,12 @@ public class NewGamePane extends BorderPane{
 			if(title.getText().equals("Galaxy Settings")){
 				this.setCenter(makeNewEmpire());
 			} else if(title.getText().equals("Empire Settings")){
-				//start game!!  :D
-				//Game game = new Game();
-				//game.start(new Stage());
-				
-				
-				Stage stage = (Stage) nextButton.getScene().getWindow();
-			    stage.close();
+	        	
+	        	GameGUI gameGUI = new GameGUI();
+	        	Stage applicationStage = new Stage();
+				gameGUI.start(applicationStage);
+				Stage currentStage = (Stage) nextButton.getScene().getWindow();
+				currentStage.close();
 			}
 		});
 		
