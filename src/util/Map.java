@@ -19,7 +19,7 @@ public class Map {
 		
 		//default map
 		
-		Faction jump = new Faction("Alpha Association", true);
+		Faction jump = new Faction("Alpha Association", true, "#B71C1C");
 		factions[0] = jump;
 		Planet homeWorldJ = new Planet("Alpha Prime", 500, 1_000_000);
 		Star homeStarJ = new Star(1, 1, jump, "Alpha", homeWorldJ);
@@ -28,7 +28,7 @@ public class Map {
 		map[1][1] = new Location(homeStarJ);
 		map[1][2] = new Location(flagshipJ);
 		
-		Faction warp = new Faction("Delta Dominion", false);
+		Faction warp = new Faction("Delta Dominion", false, "#66ff00");
 		factions[1] = warp;
 		Planet homeWorldW = new Planet("Delta Prime", 500, 1_000_000);
 		Star homeStarW = new Star(14, 13, warp, "Delta", homeWorldW);
@@ -37,7 +37,7 @@ public class Map {
 		map[14][13] = new Location(homeStarW);
 		map[14][12] = new Location(flagshipW);
 		
-		Faction uninhabited = new Faction("", false);
+		Faction uninhabited = new Faction("", false, "	#000000");
 		factions[2] = uninhabited;
 		Planet betaP = new Planet("Beta Prime", 600_000);
 		Star betaS = new Star(3, 12,  "Beta", betaP);

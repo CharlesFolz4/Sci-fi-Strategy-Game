@@ -1,5 +1,6 @@
 package util.gui;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import Ships.JumpShip;
@@ -15,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -33,7 +35,6 @@ import util.Selectable;
 import util.audio.AudioCache;
 import util.gui.images.ImageCache;
 
-//TODO: Add attacking, building, colonizing
 //TODO: Add comprehensive javadoc
 public class GameGUI extends Application{
 	private ImageCache imageCache;
@@ -54,6 +55,8 @@ public class GameGUI extends Application{
 	private StackPane cancelButton;
 	
 	private boolean shipMoveFlag;
+	
+	private ArrayList<Node> colorable;
 	
 	
 	@Override
@@ -98,22 +101,24 @@ public class GameGUI extends Application{
 		VBox infoBox = new VBox();
 		infoBox.setAlignment(Pos.CENTER);
 		sideMenuTitle = new Label(gameController.getCurrentFaction().getName());
-		sideMenuTitle.setStyle("-fx-font-size: 40;");
-		sideMenuTitle.setTextFill(Color.WHITE);
+		sideMenuTitle.setStyle("-fx-font-size: 40; -fx-text-fill: " + gameController.getCurrentFaction().getColor());
+		colorable.add(sideMenuTitle);
 		sideMenuTitle.setAlignment(Pos.CENTER);
 		sideMenuImage = new ImageView(imageCache.getGalaxies()[0]);
 		Pane imagePane = new Pane(sideMenuImage);
 		sideMenuImage.setX(1);
 		sideMenuImage.setY(1); //because JavaFX is stupid with alignments and Panes
-		imagePane.setStyle("-fx-border-width: 1; -fx-border-color: white");
+		imagePane.setStyle("-fx-border-width: 1; -fx-border-color: " + gameController.getCurrentFaction().getColor());
+		colorable.add(imagePane);
 		
 		infoBox.getChildren().addAll(sideMenuTitle, imagePane);
 		
 		sideInfoLabels = new Label[5];
 		for(int i = 0; i < sideInfoLabels.length; ++i){
 			sideInfoLabels[i] = new Label();
-			sideInfoLabels[i].setTextFill(Color.WHITE);
+			sideInfoLabels[i].setStyle("-fx-text-fill: " + gameController.getCurrentFaction().getColor());
 			sideInfoLabels[i].setAlignment(Pos.CENTER_LEFT);
+			colorable.add(sideInfoLabels[i]);
 		}
 		sideInfoLabels[0].setText("Income: \t\t" + gameController.getCurrentFaction().getIncome());
 		sideInfoLabels[1].setText("Treasury: \t\t" + gameController.getCurrentFaction().getTreasury());
@@ -127,15 +132,19 @@ public class GameGUI extends Application{
 		ImageView[] highlights = new ImageView[4];
 		for(int i = 0; i < highlights.length; ++i){
 			highlights[i] = new ImageView(imageCache.getMenuButtonHighlight());
+			imageCache.recolor(highlights[i], gameController.getCurrentFaction().getColor());
+			colorable.add(highlights[i]);
 			highlights[i].setVisible(false);
 		}
 		
 		StackPane topButton = new StackPane();
-		topButton.getChildren().addAll(new ImageView(imageCache.getMenuButton()));
-		topButton.getChildren().add(highlights[0]);
+		ImageView topButtonImage = new ImageView(imageCache.getMenuButton());
+		imageCache.recolor(topButtonImage, gameController.getCurrentFaction().getColor());
+		colorable.add(topButtonImage);
+		topButton.getChildren().addAll(topButtonImage, highlights[0]);
 		topLabel = new Label("Empire");
-		topLabel.setStyle("-fx-font-size: 40;");
-		topLabel.setTextFill(Color.WHITE);
+		topLabel.setStyle("-fx-font-size: 40; -fx-text-fill: " + gameController.getCurrentFaction().getColor());
+		colorable.add(topLabel);
 		topButton.getChildren().add(topLabel);
 		topButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	        @Override
@@ -154,11 +163,13 @@ public class GameGUI extends Application{
 		});
 		
 		StackPane middleButton = new StackPane();
-		middleButton.getChildren().addAll(new ImageView(imageCache.getMenuButton()));
-		middleButton.getChildren().add(highlights[1]);
+		ImageView middleButtonImage = new ImageView(imageCache.getMenuButton());
+		imageCache.recolor(middleButtonImage, gameController.getCurrentFaction().getColor());
+		colorable.add(middleButtonImage);
+		middleButton.getChildren().addAll(middleButtonImage, highlights[1]);
 		middleLabel = new Label("Foreign Affairs");
-		middleLabel.setStyle("-fx-font-size: 40;");
-		middleLabel.setTextFill(Color.WHITE);
+		middleLabel.setStyle("-fx-font-size: 40; -fx-text-fill: " + gameController.getCurrentFaction().getColor());
+		colorable.add(middleLabel);
 		middleButton.getChildren().add(middleLabel);
 		middleButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	        @Override
@@ -177,11 +188,13 @@ public class GameGUI extends Application{
 		});
 		
 		StackPane bottomButton = new StackPane();
-		bottomButton.getChildren().addAll(new ImageView(imageCache.getMenuButton()));
-		bottomButton.getChildren().add(highlights[2]);
+		ImageView bottomButtonImage = new ImageView(imageCache.getMenuButton());
+		imageCache.recolor(bottomButtonImage, gameController.getCurrentFaction().getColor());
+		colorable.add(bottomButtonImage);
+		bottomButton.getChildren().addAll(bottomButtonImage, highlights[2]);
 		bottomLabel = new Label("Science");
-		bottomLabel.setStyle("-fx-font-size: 40;");
-		bottomLabel.setTextFill(Color.WHITE);
+		bottomLabel.setStyle("-fx-font-size: 40; -fx-text-fill: " + gameController.getCurrentFaction().getColor());
+		colorable.add(bottomLabel);
 		bottomButton.getChildren().add(bottomLabel);
 		bottomButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	        @Override
@@ -201,11 +214,13 @@ public class GameGUI extends Application{
 		
 		cancelButton = new StackPane();
 		cancelButton.setVisible(false);
-		cancelButton.getChildren().addAll(new ImageView(imageCache.getMenuButton()));
-		cancelButton.getChildren().add(highlights[3]);
+		ImageView cancelButtonImage = new ImageView(imageCache.getMenuButton());
+		imageCache.recolor(cancelButtonImage, gameController.getCurrentFaction().getColor());
+		colorable.add(cancelButtonImage);
+		cancelButton.getChildren().addAll(cancelButtonImage, highlights[3]);
 		Label cancelLabel = new Label("Done");
-		cancelLabel.setStyle("-fx-font-size: 40;");
-		cancelLabel.setTextFill(Color.WHITE);
+		cancelLabel.setStyle("-fx-font-size: 40;  -fx-text-fill: " + gameController.getCurrentFaction().getColor());
+		colorable.add(cancelLabel);
 		cancelButton.getChildren().add(cancelLabel);
 		cancelButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	        @Override
@@ -227,8 +242,7 @@ public class GameGUI extends Application{
 		actionBox.getChildren().addAll(topButton, middleButton, bottomButton, cancelButton);
 		
 		root.setPadding(new Insets(25, 25, 0, 25));
-		root.setStyle("-fx-background-color: rgba(16, 16, 16, .75);" +
-					  "-fx-border-width: 0 0 0 4; -fx-border-color: #D0D0E0;");
+		root.setStyle("-fx-background-color: rgba(16, 16, 16, .75);");
 		root.getChildren().addAll(infoBox, actionBox);
 		return root;
 	}
@@ -246,6 +260,8 @@ public class GameGUI extends Application{
 					ship.setCargoPeople(0);
 					((Star)selected).setFaction(gameController.getCurrentFaction());
 					gameController.getCurrentFaction().addStar((Star) selected);
+					Node temp = getNodeByCoordinate(mapView, selected.getCoordinates()[0], selected.getCoordinates()[1]);
+					temp.setStyle("-fx-background-color: transparent; -fx-border-width: 1 1 1 1; -fx-border-color: " + gameController.getCurrentFaction().getColor());
 				}
 			}
 			
@@ -263,6 +279,11 @@ public class GameGUI extends Application{
 				}
 				gameController.invadeSystem((Star) selected, soldiers);
 				select(selected);
+				if(((Star)selected).getFaction().equals(gameController.getCurrentFaction())){
+					//invasion succeeded
+					Node temp = getNodeByCoordinate(mapView, selected.getCoordinates()[0], selected.getCoordinates()[1]);
+					temp.setStyle("-fx-background-color: transparent; -fx-border-width: 1 1 1 1; -fx-border-color: " + gameController.getCurrentFaction().getColor());
+				}
 			}
 		}else if(selected instanceof Ship && !shipMoveFlag){
 			shipMoveFlag = true;
@@ -358,7 +379,7 @@ public class GameGUI extends Application{
 				sideInfoLabels[3].setText("Shipyard: \t\tN/A");
 				sideInfoLabels[4].setText("Planets: \t\t" + ((Star) selected).getPlanets().length);
 			} else if (((Star) selected).getFaction() != gameController.getCurrentFaction()){
-				topLabel.setText("Attack");
+				topLabel.setText("Invade");
 				middleLabel.setText("Intel");
 				bottomLabel.setText("Speak To");
 				
@@ -371,7 +392,7 @@ public class GameGUI extends Application{
 		}
 	}
 
-	//TODO: bug wherein target circle doesn't disappear during turnchange when a shipbsprite is on same square
+	//TODO: bug wherein target circle doesn't disappear during turnchange when a shipsprite is on same square
 	public void updateDisplay(){
 		StackPane temp;
 		for(int x = 0; x < gameMap.getDimensions()[0]; ++x){
@@ -392,8 +413,10 @@ public class GameGUI extends Application{
 					}
 				} else if (gameMap.getMap()[x][y].getShips() != null){
 					if((((StackPane)getNodeByCoordinate(mapView, x, y)).getChildren().isEmpty() || ((StackPane)getNodeByCoordinate(mapView, x, y)).getChildren().contains(targetMarker))){
-				
-						((StackPane)getNodeByCoordinate(mapView, x, y)).getChildren().add(new ImageView(imageCache.getShipS()));
+						
+						ImageView shipSprite = new ImageView(imageCache.getShipS());
+						imageCache.recolor(shipSprite, gameMap.getMap()[x][y].getShips()[0].getFaction().getColor());
+						((StackPane)getNodeByCoordinate(mapView, x, y)).getChildren().add(shipSprite);
 					
 					}
 				} else if (gameMap.getMap()[x][y].getShips() == null && (((StackPane)getNodeByCoordinate(mapView, x, y)).getChildren().size() > 1)){
@@ -419,7 +442,8 @@ public class GameGUI extends Application{
 	
 	public Node makeMapView() {
 		StackPane subRoot = new StackPane();
-		subRoot.setStyle("-fx-background-color: transparent; -fx-border-width: 4; -fx-border-color: white;");
+		subRoot.setStyle("-fx-background-color: transparent; -fx-border-width: 4; -fx-border-color:  " + gameController.getCurrentFaction().getColor());
+		colorable.add(subRoot);
 		subRoot.prefHeightProperty().bind(root.heightProperty());
 		
 		BorderPane utilPane = new BorderPane();
@@ -430,11 +454,16 @@ public class GameGUI extends Application{
 		
 		StackPane nextButton = new StackPane();
 		Label nextLabel = new Label("Next");
-		nextLabel.setStyle("-fx-font-size: 28");
-		nextLabel.setTextFill(Color.WHITE);
+		nextLabel.setStyle("-fx-font-size: 28; -fx-text-fill: " + gameController.getCurrentFaction().getColor());
+		colorable.add(nextLabel);
 		ImageView nextHighlight = new ImageView(imageCache.getButtonBRHighlight());
+		imageCache.recolor(nextHighlight, gameController.getCurrentFaction().getColor());
+		colorable.add(nextHighlight);
 		nextHighlight.setVisible(false);
-		nextButton.getChildren().addAll(new ImageView(imageCache.getButtonBR()), nextLabel, nextHighlight);
+		ImageView nextButtonImage = new ImageView(imageCache.getButtonBR());
+		colorable.add(nextButtonImage);
+		imageCache.recolor(nextButtonImage, gameController.getCurrentFaction().getColor());
+		nextButton.getChildren().addAll(nextButtonImage, nextLabel, nextHighlight);
 		nextButton.setOnMouseEntered((event) -> {
         	nextHighlight.setVisible(true);
 	    });
@@ -446,6 +475,7 @@ public class GameGUI extends Application{
 			updateDisplay();
 			gameController.endFactionTurn();
 			updateSideMenu();
+			recolor();
 		});
 		
 		bottomRoot.getChildren().addAll(nextButton);
@@ -464,17 +494,20 @@ public class GameGUI extends Application{
 		for(int x = 0; x < gameMap.getDimensions()[0]; ++x){
 			for(int y = 0; y < gameMap.getDimensions()[1]; ++y){
 				temp = new StackPane();
-				temp.setPrefSize(100, 100);
-				temp.setMinSize(100, 100);
+				temp.setPrefSize(102, 102);
+				temp.setMinSize(102, 102);
 				temp.setStyle("-fx-background-color: transparent;" +
 						"-fx-border-width: 1 1 1 1; -fx-border-color: rgba(255, 255, 255, .125);");
 				Location location = gameMap.getMap()[x][y];
 				if(location != null){
 					if(location.getStar() != null){
 						temp.getChildren().add(new ImageView(imageCache.getBlueStarS()));
+						if(location.getStar().getFaction() != null){
+							temp.setStyle("-fx-background-color: transparent; -fx-border-width: 1 1 1 1; -fx-border-color: " + location.getStar().getFaction().getColor());
+						}
 					}
 					if(location.getShips() != null){
-						temp.getChildren().add(new ImageView(imageCache.getShipS()));
+						temp.getChildren().add(imageCache.recolor(new ImageView(imageCache.getShipS()), location.getShips()[0].getFaction().getColor()));
 					}
 				}
 				mapView.add(temp, x, y);
@@ -520,7 +553,6 @@ public class GameGUI extends Application{
 								}
 							}
 							
-							//TODO:  Sometimes jump ships don't jump?
 							Thread pathFinderThread = new Thread( () -> {
 								if(selected instanceof WarpShip){
 									gameController.moveWarpShip((WarpShip)selected);
@@ -590,7 +622,23 @@ public class GameGUI extends Application{
 		
 		return subRoot;
 	}
-
+	
+	public void recolor(){
+		char[] style;
+		char[] color = gameController.getCurrentFaction().getColor().toCharArray();
+		for(Node node : colorable){
+			style = node.getStyle().toCharArray();
+			if(style.length > 0){
+				for(int i = 0; i < 6; ++i){
+					style[style.length-(i+1)] = color[color.length-(i+1)]; 
+				}
+				node.setStyle(new String(style));
+			} else { //it's an image
+				imageCache.recolor((ImageView)node, gameController.getCurrentFaction().getColor());
+			}
+		}
+	}
+	
 	public GameGUI(){
 		imageCache = new ImageCache();
 		imageCache.loadMenuImages();
@@ -603,6 +651,7 @@ public class GameGUI extends Application{
 		
 		targetMarker = new ImageView(imageCache.getTarget());
 		targetMarker.setMouseTransparent(true);
+		colorable = new ArrayList<Node>();
 		
 		shipMoveFlag = false;
 	}

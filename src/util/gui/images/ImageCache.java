@@ -6,7 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 
 public class ImageCache {
 	private String path = "bin" + File.separator + "util" + File.separator + "gui" + File.separator + "images" + File.separator;
@@ -128,6 +131,22 @@ public class ImageCache {
 //			e.printStackTrace();
 		}
 		
+		return image;
+	}
+	
+	public ImageView recolor(ImageView image, String hexColor){
+		int red   = Integer.parseInt(String.copyValueOf(hexColor.toCharArray(), 1, 2), 16);
+		int green = Integer.parseInt(String.copyValueOf(hexColor.toCharArray(), 3, 2), 16);
+		int blue  = Integer.parseInt(String.copyValueOf(hexColor.toCharArray(), 5, 2), 16);
+		
+//		System.out.println(red + "," + green + "," + blue);
+		Color recolor = new Color(red/255.0, green/255.0, blue/255.0, 0);
+//		System.out.println(hexColor + " -> " + recolor.toString().toUpperCase());
+		
+		ColorAdjust adjust = new ColorAdjust();
+		adjust.setHue(((recolor.getHue()+180)%360)/180 -1 );
+		adjust.setSaturation((recolor.getSaturation()) );
+		image.setEffect(adjust);
 		return image;
 	}
 	

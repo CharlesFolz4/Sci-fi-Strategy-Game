@@ -25,6 +25,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import util.Faction;
+import util.GameController;
 import util.gui.images.ImageCache;
 
 //Bigger click areas for the plus/minus buttons?
@@ -63,7 +64,7 @@ public class Shipyard extends BorderPane{
 		this.cost   = 0;
 		this.imageCache.loadShipyardImages();
 		
-		this.setStyle("-fx-border-width: 4; -fx-border-color: white");
+		this.setStyle("-fx-border-width: 4; -fx-border-color: " + currentFacion.getColor());
 		
 		HBox topPane = new HBox();
 		Label shipyardLabel = new Label("Shipyard");
@@ -72,7 +73,7 @@ public class Shipyard extends BorderPane{
 		topPane.getChildren().add(shipyardLabel);
 		topPane.setAlignment(Pos.CENTER);
 		topPane.setPadding(new Insets(40));
-		topPane.setStyle("-fx-border-width: 0 0 3 0; -fx-border-color: white");
+		topPane.setStyle("-fx-border-width: 0 0 3 0; -fx-border-color: " + currentFacion.getColor());
 		this.setTop(topPane);
 
 		HBox shipDataBox = new HBox();
@@ -81,8 +82,7 @@ public class Shipyard extends BorderPane{
 		shipDataBox.getChildren().addAll(makeBuildPane(), makeShipDisplayPane());
 	}
 	
-	//TODO: Make buttons- Build/Confirm, Return(To Star System), Return(To Empire), Save as Template/Class, Load Template/Class, 
-	//Reset Build Points, Specialization(Gives a multiplier bonus to selected category)?, Set Rally Point, 
+	//TODO: Make buttons-  Save as Template/Class, Load Template/Class,
 	
 	private Node makeShipDisplayPane(){
 		GridPane shipDisplayPane = new GridPane();
@@ -94,7 +94,7 @@ public class Shipyard extends BorderPane{
 		shipPreviewLabel.setTextFill(Color.WHITE);
 		shipPreviewLabel.setTranslateX(5);
 		temp = new Pane(shipPreviewLabel);
-		temp.setStyle("-fx-border-width: 3 2 2 3; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+		temp.setStyle("-fx-border-width: 3 2 2 3; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 		shipDisplayPane.add(temp, 0, 0, 4, 1);
 		
 		Label nameLabel = new Label("Name: ");
@@ -102,7 +102,7 @@ public class Shipyard extends BorderPane{
 		nameLabel.setTextFill(Color.WHITE);
 		nameLabel.setTranslateX(5);
 		temp = new Pane(nameLabel);
-		temp.setStyle("-fx-border-width: 0 0 0 3; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+		temp.setStyle("-fx-border-width: 0 0 0 3; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 		temp.setPrefWidth(150);
 		shipDisplayPane.add(temp, 0, 1);
 		
@@ -110,7 +110,7 @@ public class Shipyard extends BorderPane{
 		shipNameLabel.setStyle("-fx-font-size: 20;");
 		shipNameLabel.setTextFill(Color.WHITE);
 		temp = new Pane(shipNameLabel);
-		temp.setStyle("-fx-border-width: 0 1 0 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+		temp.setStyle("-fx-border-width: 0 1 0 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 		temp.setPrefWidth(150);
 		shipDisplayPane.add(temp, 1, 1);
 		
@@ -122,9 +122,9 @@ public class Shipyard extends BorderPane{
 			statsLabels[i].setTranslateX(5);
 			temp = new Pane(statsLabels[i]);
 			if(i == 4){
-				temp.setStyle("-fx-border-width: 0 0 1 3; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 0 1 3; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			} else {
-				temp.setStyle("-fx-border-width: 0 0 0 3; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 0 0 3; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			}
 			temp.setPrefWidth(150);
 			shipDisplayPane.add(temp, 0, i+2);
@@ -134,9 +134,9 @@ public class Shipyard extends BorderPane{
 			shipSystemStats[i].setTextFill(Color.WHITE);
 			temp = new Pane(shipSystemStats[i]);
 			if(i == 4){
-				temp.setStyle("-fx-border-width: 0 1 1 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 1 1 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			} else {
-				temp.setStyle("-fx-border-width: 0 1 0 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 1 0 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			}
 			shipDisplayPane.add(temp, 1, i+2);
 		}
@@ -149,9 +149,9 @@ public class Shipyard extends BorderPane{
 			weaponLabels[i].setTranslateX(5);
 			temp = new Pane(weaponLabels[i]);
 			if(i == 2){
-				temp.setStyle("-fx-border-width: 0 0 2 3; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 0 2 3; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			} else {
-				temp.setStyle("-fx-border-width: 0 0 0 3; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 0 0 3; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			}
 			temp.setPrefWidth(150);
 			shipDisplayPane.add(temp, 0, i+7);
@@ -161,9 +161,9 @@ public class Shipyard extends BorderPane{
 			weaponSystemStats[i].setTextFill(Color.WHITE);
 			temp = new Pane(weaponSystemStats[i]);
 			if(i == 2){
-				temp.setStyle("-fx-border-width: 0 1 2 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 1 2 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			} else {
-				temp.setStyle("-fx-border-width: 0 1 0 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 1 0 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			}
 			shipDisplayPane.add(temp, 1, i+7);
 		}
@@ -176,9 +176,9 @@ public class Shipyard extends BorderPane{
 			defenseLabels[i].setTranslateX(5);
 			temp = new Pane(defenseLabels[i]);
 			if(i == 2){
-				temp.setStyle("-fx-border-width: 0 0 2 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 0 2 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			} else {
-				temp.setStyle("-fx-border-width: 0 0 0 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 0 0 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			}
 			temp.setPrefWidth(150);
 			shipDisplayPane.add(temp, 2, i+7);
@@ -189,16 +189,16 @@ public class Shipyard extends BorderPane{
 			temp = new Pane(defenseSystemStats[i]);
 			temp.setMinWidth(75);
 			if(i == 2){
-				temp.setStyle("-fx-border-width: 0 3 2 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 3 2 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			} else {
-				temp.setStyle("-fx-border-width: 0 3 0 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 3 0 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			}
 			shipDisplayPane.add(temp, 3, i+7);
 		}
 		
 		//filler pane
 		temp = new Pane();
-		temp.setStyle("-fx-border-width: 0 3 0 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+		temp.setStyle("-fx-border-width: 0 3 0 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 		shipDisplayPane.add(temp, 2, 1, 2, 1);
 		
 		Label upkeepLabel = new Label("Upkeep Cost: ");
@@ -212,7 +212,7 @@ public class Shipyard extends BorderPane{
 		upkeepStat.setStyle("-fx-font-size: 20;");
 		upkeepStat.setTextFill(Color.WHITE);
 		temp = new Pane(upkeepStat);
-		temp.setStyle("-fx-border-width: 0 3 0 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+		temp.setStyle("-fx-border-width: 0 3 0 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 		shipDisplayPane.add(temp, 3, 2);
 		
 		Label costLabel = new Label("Build Cost: ");
@@ -226,7 +226,7 @@ public class Shipyard extends BorderPane{
 		costStat.setStyle("-fx-font-size: 20;");
 		costStat.setTextFill(Color.WHITE);
 		temp = new Pane(costStat);
-		temp.setStyle("-fx-border-width: 0 3 0 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+		temp.setStyle("-fx-border-width: 0 3 0 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 		shipDisplayPane.add(temp, 3, 3);
 
 		Label buildTimeLabel = new Label("Build Time: ");
@@ -240,20 +240,23 @@ public class Shipyard extends BorderPane{
 		buildTime.setStyle("-fx-font-size: 20;");
 		buildTime.setTextFill(Color.WHITE);
 		temp = new Pane(buildTime);
-		temp.setStyle("-fx-border-width: 0 3 0 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+		temp.setStyle("-fx-border-width: 0 3 0 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 		shipDisplayPane.add(temp, 3, 4);
 
 		//filler pane
 		temp = new Pane();
-		temp.setStyle("-fx-border-width: 0 3 1 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+		temp.setStyle("-fx-border-width: 0 3 1 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 		shipDisplayPane.add(temp, 2, 5, 2, 2);
 		
 		
 		VBox buttons = new VBox();
 		StackPane buildButton = new StackPane();
 		ImageView buildButtonHighlight = new ImageView(imageCache.getBuildShipHighlight());
+		imageCache.recolor(buildButtonHighlight, currentFaction.getColor());
 		buildButtonHighlight.setVisible(false);
-		buildButton.getChildren().addAll(new ImageView(imageCache.getBuildShipButton()), buildButtonHighlight);
+		ImageView buildButtonImage = new ImageView(imageCache.getBuildShipButton());
+		imageCache.recolor(buildButtonImage, currentFaction.getColor());
+		buildButton.getChildren().addAll(buildButtonImage, buildButtonHighlight);
 		buildButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent t) {
@@ -298,8 +301,11 @@ public class Shipyard extends BorderPane{
 		
 		StackPane cancelButton = new StackPane();
 		ImageView cancelButtonHighlight = new ImageView(imageCache.getCancelShipyardHighlight());
+		imageCache.recolor(cancelButtonHighlight, currentFaction.getColor());
 		cancelButtonHighlight.setVisible(false);
-		cancelButton.getChildren().addAll(new ImageView(imageCache.getCancelShipyardButton()), cancelButtonHighlight);
+		ImageView cancelButtonImage = new ImageView(imageCache.getCancelShipyardButton());
+		imageCache.recolor(cancelButtonImage, currentFaction.getColor());
+		cancelButton.getChildren().addAll(cancelButtonImage, cancelButtonHighlight);
 		cancelButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent t) {
@@ -354,7 +360,7 @@ public class Shipyard extends BorderPane{
 		maxBuildPointLabel.setStyle("-fx-font-size: 20;");
 		maxBuildPointLabel.setTextFill(Color.WHITE);
 		buildPointBox.getChildren().addAll(buildPointLabel, maxBuildPointLabel);
-		buildPointBox.setStyle("-fx-border-width: 3 2 2 3; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+		buildPointBox.setStyle("-fx-border-width: 3 2 2 3; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 		buildPointBox.setPadding(new Insets(5));
 		shipBuildPane.add(buildPointBox, 0, 0, 4, 1);
 		GridPane.setHgrow(buildPointBox, Priority.ALWAYS);
@@ -364,7 +370,7 @@ public class Shipyard extends BorderPane{
 		shipSystemsLabel.setTextFill(Color.WHITE);
 		shipSystemsLabel.setTranslateX(5); 
 		Pane shipSystemsLabelBox = new Pane(shipSystemsLabel);
-		shipSystemsLabelBox.setStyle("-fx-border-width: 0 2 1 3; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+		shipSystemsLabelBox.setStyle("-fx-border-width: 0 2 1 3; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 		shipBuildPane.add(shipSystemsLabelBox, 0, 1, 4, 1);
 		GridPane.setHgrow(shipSystemsLabelBox, Priority.ALWAYS);
 		
@@ -381,9 +387,9 @@ public class Shipyard extends BorderPane{
 			temp.setPrefWidth(150);
 			shipSystems[i].setTranslateX(10);
 			if(i == 4){
-				temp.setStyle("-fx-border-width: 0 0 2 3; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 0 2 3; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			} else {
-				temp.setStyle("-fx-border-width: 0 0 0 3; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 0 0 3; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			}
 			shipBuildPane.add(temp, 0, i+2);
 			
@@ -392,7 +398,7 @@ public class Shipyard extends BorderPane{
 			temp = new Pane(shipSystemsMinus[i]);
 			temp.setPrefWidth(28);
 			if(i == 4){
-				temp.setStyle("-fx-border-width: 0 0 2 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 0 2 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			} else {
 				temp.setStyle("-fx-background-color: rgba(16, 16, 16, .75);");
 			}
@@ -430,7 +436,7 @@ public class Shipyard extends BorderPane{
 			temp = new Pane(shipSystemsPoints[i]);
 			temp.setPrefWidth(30);
 			if(i == 4){
-				temp.setStyle("-fx-border-width: 0 0 2 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 0 2 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			}else {
 				temp.setStyle("-fx-background-color: rgba(16, 16, 16, .75);");
 			}
@@ -441,9 +447,9 @@ public class Shipyard extends BorderPane{
 			temp = new Pane(shipSystemsPlus[i]);
 			temp.setPrefWidth(28);
 			if(i == 4){
-				temp.setStyle("-fx-border-width: 0 2 2 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 2 2 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			} else {
-				temp.setStyle("-fx-border-width: 0 2 0 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 2 0 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			}
 			shipBuildPane.add(temp, 3, i+2);
 			shipSystemsPlus[i].setOnMouseClicked((event) -> {
@@ -477,7 +483,7 @@ public class Shipyard extends BorderPane{
 		militarySystemsLabel.setStyle("-fx-font-size: 24;");
 		militarySystemsLabel.setTextFill(Color.WHITE);
 		VBox militarySystemsLabelBox = new VBox(militarySystemsLabel);
-		militarySystemsLabelBox.setStyle("-fx-border-width: 0 2 1 3; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+		militarySystemsLabelBox.setStyle("-fx-border-width: 0 2 1 3; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 		militarySystemsLabelBox.setPadding(new Insets(5));
 		shipBuildPane.add(militarySystemsLabelBox, 0, 7, 8, 1);
 		GridPane.setHgrow(militarySystemsLabelBox, Priority.ALWAYS);
@@ -493,9 +499,9 @@ public class Shipyard extends BorderPane{
 			temp = new Pane(weaponSystems[i]);
 			temp.setPrefWidth(150);
 			if(i == 2){
-				temp.setStyle("-fx-border-width: 0 0 3 3; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 0 3 3; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			} else {
-				temp.setStyle("-fx-border-width: 0 0 0 3; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 0 0 3; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			}
 			shipBuildPane.add(temp, 0, i+8);
 			
@@ -505,7 +511,7 @@ public class Shipyard extends BorderPane{
 			temp = new Pane(weaponSystemsMinus[i]);
 			temp.setPrefWidth(28);
 			if(i == 2){
-				temp.setStyle("-fx-border-width: 0 0 3 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 0 3 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			} else {
 				temp.setStyle("-fx-background-color: rgba(16, 16, 16, .75);");
 			}
@@ -542,7 +548,7 @@ public class Shipyard extends BorderPane{
 			temp = new Pane(weaponSystemsPoints[i]);
 			temp.setPrefWidth(30);
 			if(i == 2){
-				temp.setStyle("-fx-border-width: 0 0 3 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 0 3 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			} else {
 				temp.setStyle("-fx-background-color: rgba(16, 16, 16, .75);");
 			}
@@ -553,9 +559,9 @@ public class Shipyard extends BorderPane{
 			temp = new Pane(weaponSystemsPlus[i]);
 			temp.setPrefWidth(28);
 			if(i == 2){
-				temp.setStyle("-fx-border-width: 0 1 3 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 1 3 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			} else {
-				temp.setStyle("-fx-border-width: 0 1 0 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 1 0 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			}
 			shipBuildPane.add(temp, 3, i+8);
 			weaponSystemsPlus[i].setOnMouseClicked((event) -> {
@@ -596,7 +602,7 @@ public class Shipyard extends BorderPane{
 			temp = new Pane(defenseSystems[i]);
 			temp.setPrefWidth(150);
 			if(i == 2){
-				temp.setStyle("-fx-border-width: 0 0 3 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 0 3 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			} else {
 				temp.setStyle("-fx-background-color: rgba(16, 16, 16, .75);");
 			}
@@ -608,7 +614,7 @@ public class Shipyard extends BorderPane{
 			temp = new Pane(defenseSystemsMinus[i]);
 			temp.setPrefWidth(28);
 			if(i == 2){
-				temp.setStyle("-fx-border-width: 0 0 3 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 0 3 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			} else {
 				temp.setStyle("-fx-background-color: rgba(16, 16, 16, .75);");
 			}
@@ -645,7 +651,7 @@ public class Shipyard extends BorderPane{
 			temp = new Pane(defenseSystemsPoints[i]);
 			temp.setPrefWidth(30);
 			if(i == 2){
-				temp.setStyle("-fx-border-width: 0 0 3 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 0 3 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			} else {
 				temp.setStyle("-fx-background-color: rgba(16, 16, 16, .75);");
 			}
@@ -656,9 +662,9 @@ public class Shipyard extends BorderPane{
 			temp = new Pane(defenseSystemsPlus[i]);
 			temp.setPrefWidth(28);
 			if(i == 2){
-				temp.setStyle("-fx-border-width: 0 2 3 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 2 3 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			} else {
-				temp.setStyle("-fx-border-width: 0 2 0 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+				temp.setStyle("-fx-border-width: 0 2 0 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 			}
 			shipBuildPane.add(temp, 7, i+8);
 			defenseSystemsPlus[i].setOnMouseClicked((event) -> {
@@ -695,7 +701,7 @@ public class Shipyard extends BorderPane{
 		shipInfo.setTextFill(Color.WHITE);
 		VBox shipInfoBox = new VBox(shipInfo);
 		shipInfoBox.setPadding(new Insets(5));
-		shipInfoBox.setStyle("-fx-border-width: 3 3 1 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+		shipInfoBox.setStyle("-fx-border-width: 3 3 1 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 		shipBuildPane.add(shipInfoBox, 4, 0, 4, 1);
 		GridPane.setHgrow(shipInfoBox, Priority.ALWAYS);
 		
@@ -708,7 +714,7 @@ public class Shipyard extends BorderPane{
 		temp.setStyle("-fx-background-color: rgba(16, 16, 16, .75);");
 		shipBuildPane.add(temp, 4, 1);
 		shipNameText = new TextField();
-		shipNameText.setStyle("-fx-border-width: 0 3 0 0; -fx-border-color: white;");
+		shipNameText.setStyle("-fx-border-width: 0 3 0 0; -fx-border-color: " + currentFaction.getColor() + ";");
 		shipBuildPane.add(shipNameText, 5, 1, 3, 1);
 		shipNameText.textProperty().addListener(new ChangeListener<String>() {
 		    @Override
@@ -728,7 +734,7 @@ public class Shipyard extends BorderPane{
 		buildCostDisplay.setStyle("-fx-font-size: 20;");
 		buildCostDisplay.setTextFill(Color.WHITE);
 		temp = new Pane(buildCostDisplay);
-		temp.setStyle("-fx-border-width: 0 3 0 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+		temp.setStyle("-fx-border-width: 0 3 0 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 		shipBuildPane.add(temp, 5, 2, 3, 1);
 		temp = new Pane();
 		temp.setMinWidth(100);
@@ -739,13 +745,13 @@ public class Shipyard extends BorderPane{
 		upkeepCostLabel.setTextFill(Color.WHITE);
 		upkeepCostLabel.setTranslateX(5);
 		temp = new Pane(upkeepCostLabel);
-		temp.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+		temp.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 		shipBuildPane.add(temp, 4, 3);
 		upkeepCostDisplay = new Label("0");
 		upkeepCostDisplay.setStyle("-fx-font-size: 20;");
 		upkeepCostDisplay.setTextFill(Color.WHITE);
 		temp = new Pane(upkeepCostDisplay);
-		temp.setStyle("-fx-border-width: 0 3 1 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+		temp.setStyle("-fx-border-width: 0 3 1 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 		shipBuildPane.add(temp, 5, 3, 3, 1);
 		
 		
@@ -754,12 +760,12 @@ public class Shipyard extends BorderPane{
 		descriptionLabel.setTextFill(Color.WHITE);
 		descriptionLabel.setTranslateX(5);
 		temp = new Pane(descriptionLabel);
-		temp.setStyle("-fx-border-width: 0 3 0 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+		temp.setStyle("-fx-border-width: 0 3 0 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 		shipBuildPane.add(temp, 4, 4, 4, 1);
 		descriptionText = new TextArea();
 		descriptionText.setTranslateX(5);
 		temp = new Pane(descriptionText);
-		temp.setStyle("-fx-border-width: 0 3 1 0; -fx-border-color: white; -fx-background-color: rgba(16, 16, 16, .75);");
+		temp.setStyle("-fx-border-width: 0 3 1 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
 		shipBuildPane.add(temp, 4, 5, 4, 2);
 		descriptionText.setWrapText(true);
 		descriptionText.setPrefWidth(295);

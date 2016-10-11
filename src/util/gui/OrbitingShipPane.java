@@ -31,7 +31,7 @@ public class OrbitingShipPane extends BorderPane {
 		this.imageCache = imageCache;
 		this.imageCache.loadOrbitalShipsImages();
 		
-		this.setStyle("-fx-border-width: 4; -fx-border-color: white");
+		this.setStyle("-fx-border-width: 4; -fx-border-color:" + star.getFaction().getColor());
 		
 		HBox topPane = new HBox();
 		Label shipyardLabel = new Label("Orbiting Ships");
@@ -40,7 +40,7 @@ public class OrbitingShipPane extends BorderPane {
 		topPane.getChildren().add(shipyardLabel);
 		topPane.setAlignment(Pos.CENTER);
 		topPane.setPadding(new Insets(40));
-		topPane.setStyle("-fx-border-width: 0 0 3 0; -fx-border-color: white");
+		topPane.setStyle("-fx-border-width: 0 0 3 0; -fx-border-color: " + star.getFaction().getColor());
 		this.setTop(topPane);
 		
 //		this.setBottom(makeBottom());
@@ -51,7 +51,7 @@ public class OrbitingShipPane extends BorderPane {
 
 	private Node makeBottom(Ship ship) {
 		GridPane root = new GridPane();
-		root.setStyle("-fx-background-color: rgba(16, 16, 16, .75); -fx-border-width: 4 0 0 0; -fx-border-color: white");
+		root.setStyle("-fx-background-color: rgba(16, 16, 16, .75); -fx-border-width: 4 0 0 0; -fx-border-color: " + star.getFaction().getColor());
 		root.setPadding(new Insets(50));
 		
 		Pane temp;
@@ -163,7 +163,7 @@ public class OrbitingShipPane extends BorderPane {
 		healthLabel.setStyle("-fx-font-size: 18;");
 		healthLabel.setTextFill(Color.WHITE);
 		temp = new Pane(healthLabel);
-		temp.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: white;");
+		temp.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: " + star.getFaction().getColor());
 		temp.setPrefWidth(150);
 		root.add(temp, 2, 1);
 		ImageView decomission = new ImageView(imageCache.getMinus());
@@ -174,19 +174,19 @@ public class OrbitingShipPane extends BorderPane {
 			//TODO: decomission ship
 		});
 		temp.setPrefWidth(28);
-		temp.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: white;");
+		temp.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: " + star.getFaction().getColor());
 		root.add(temp, 3, 1);
 		Label shipHealthLabel = new Label("" + ship.getCurrentHealth());
 		shipHealthLabel.setStyle("-fx-font-size: 18;");
 		shipHealthLabel.setTextFill(Color.WHITE);
 		temp = new Pane(shipHealthLabel);
-		temp.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: white;");
+		temp.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: " + star.getFaction().getColor());
 		root.add(temp, 4, 1);
 		Label maxHealthLabel = new Label("/ " + ship.getMaxHealth());
 		maxHealthLabel.setStyle("-fx-font-size: 18;");
 		maxHealthLabel.setTextFill(Color.WHITE);
 		temp = new Pane(maxHealthLabel);
-		temp.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: white;");
+		temp.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: " + star.getFaction().getColor());
 		root.add(temp, 5, 1);
 		ImageView repair = new ImageView(imageCache.getPlus());
 		repair.setTranslateX(8);
@@ -197,7 +197,7 @@ public class OrbitingShipPane extends BorderPane {
 			ship.repair();
 		});
 		temp.setPrefWidth(28);
-		temp.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: white;");
+		temp.setStyle("-fx-border-width: 0 0 1 0; -fx-border-color: " + star.getFaction().getColor());
 		root.add(temp, 6, 1);
 		
 		
@@ -448,13 +448,15 @@ public class OrbitingShipPane extends BorderPane {
 	private Node makeShipGrid(Ship...ships) {
 		FlowPane root = new FlowPane();
 		root.setPadding(new Insets(35));
+		root.setVgap(20);
+		root.setHgap(20);
 		
 		Pane temp;
 		if(ships != null){
 			for(Ship ship : ships){
 				temp = new StackPane();
 				temp.setMinSize(200, 200);
-				temp.setStyle("-fx-background-color: rgba(16, 16, 16, .75); -fx-background-radius: 10, 10; -fx-border-radius: 10, 10; -fx-border-color: white");
+				temp.setStyle("-fx-background-color: rgba(16, 16, 16, .75); -fx-background-radius: 10, 10; -fx-border-radius: 10, 10; -fx-border-color: " + star.getFaction().getColor());
 				
 				VBox shipDisplay = new VBox();
 				shipDisplay.setAlignment(Pos.CENTER);
@@ -466,7 +468,7 @@ public class OrbitingShipPane extends BorderPane {
 				
 				temp.getChildren().add(shipDisplay);
 				temp.setOnMouseClicked((event) -> {
-					((Pane)event.getSource()).setStyle("-fx-background-color: rgba(16, 16, 16, .75); -fx-background-radius: 10, 10; -fx-border-radius: 10, 10; -fx-border-color: white; -fx-border-width: 3");
+					((Pane)event.getSource()).setStyle("-fx-background-color: rgba(16, 16, 16, .75); -fx-background-radius: 10, 10; -fx-border-radius: 10, 10; -fx-border-color: " + star.getFaction().getColor() + "; -fx-border-width: 3");
 					this.setBottom(makeBottom(ship));
 					event.consume();
 				});
