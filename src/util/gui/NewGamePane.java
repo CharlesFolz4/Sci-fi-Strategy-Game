@@ -1,24 +1,39 @@
 package util.gui;
 
+import java.util.ArrayList;
+
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import util.Map;
 import util.gui.images.ImageCache;
 
 public class NewGamePane extends BorderPane{
 	private ImageCache imageCache;
 	private Label title;
+	
+	private Slider[] galaxySettings;
+	private ArrayList<TextField>   factionNames;
+	private ArrayList<RadioButton> factionUsesJump;
+	private ArrayList<ColorPicker> factionColors;
 	
 	
 	public NewGamePane(ImageCache imageCache){
@@ -51,9 +66,31 @@ public class NewGamePane extends BorderPane{
 		nextButton.setOnMouseClicked((event) -> {
 			if(title.getText().equals("Galaxy Settings")){
 				this.setCenter(makeNewEmpire());
+				
 			} else if(title.getText().equals("Empire Settings")){
+				int dimension = (int) galaxySettings[3].getValue();
+				double[] probabilities = {galaxySettings[0].getValue(),galaxySettings[1].getValue(),galaxySettings[2].getValue()};
+				String[] factionNames = new String[this.factionNames.size()];
+				boolean[] factionUsesJump = new boolean[this.factionUsesJump.size()];
+				String[] factionColors = new String[this.factionColors.size()];
+				
+				Color tempColor;
+				for(int i = 0; i < factionNames.length; ++i){ //all three arrays will always be same size
+					factionNames[i] = this.factionNames.get(i).getText();
+					factionUsesJump[i] = this.factionUsesJump.get(i).isSelected();
+					tempColor = this.factionColors.get(i).getValue();
+					int r,g,b;
+					r = (int)(tempColor.getRed()  * 255);
+			        g = (int)(tempColor.getGreen()* 255);
+			        b = (int)(tempColor.getBlue() * 255);
+			        factionColors[i] = "#" + Integer.toHexString(r) + (Integer.toHexString(r).length() == 1? "0":"") +
+							   Integer.toHexString(g) + (Integer.toHexString(g).length() == 1? "0":"") +
+							   Integer.toHexString(b) + (Integer.toHexString(b).length() == 1? "0":"");
+				}
+				
+				Map gameMap = new Map(dimension, dimension, probabilities, factionNames, factionUsesJump, factionColors);
 	        	
-	        	GameGUI gameGUI = new GameGUI();
+	        	GameGUI gameGUI = new GameGUI(gameMap);
 	        	Stage applicationStage = new Stage();
 				gameGUI.start(applicationStage);
 				Stage currentStage = (Stage) nextButton.getScene().getWindow();
@@ -69,10 +106,70 @@ public class NewGamePane extends BorderPane{
 				  "-fx-border-width: 4 4 4 4; -fx-border-color: white;");
 	}
 
+
 	private Node makeNewEmpire() {
-		VBox root = new VBox();
+		VBox root = new VBox(20);
+		root.setPadding(new Insets(100));
 		title.setText("Empire Settings");
 		//do stuff
+		root.setAlignment(Pos.CENTER);
+		
+		factionNames    = new ArrayList<TextField>();
+		factionUsesJump = new ArrayList<RadioButton>();
+		factionColors   = new ArrayList<ColorPicker>();
+		
+		int factionCount = (int)Math.sqrt(galaxySettings[3].getValue());
+		System.out.println(factionCount);
+		for(int i = 0; i < factionCount; ++i){
+			HBox factionBox = new HBox();
+			factionBox.setStyle("-fx-background-color: rgba(16, 16, 16, .85); -fx-border-width: 2; -fx-border-color: white;");
+			factionBox.setPadding(new Insets(15));
+			Region temp;
+			
+			Label nameLabel = new Label("Faction Name:   ");
+			nameLabel.setTranslateY(4);
+			nameLabel.setStyle("-fx-font-size: 18");
+			nameLabel.setTextFill(Color.WHITE);
+			TextField nameField = new TextField("Player " + (i+1));
+			nameField.setTranslateY(5);
+			temp = new Region();
+			HBox.setHgrow(temp, Priority.ALWAYS);
+			factionBox.getChildren().addAll(nameLabel, nameField, temp);
+			
+			VBox ftlToggleBox = new VBox(4);
+			ToggleGroup ftlStyle = new ToggleGroup();
+			RadioButton jumpFTL = new RadioButton("Jump Drives ");
+			jumpFTL.setToggleGroup(ftlStyle);
+			jumpFTL.setTextFill(Color.WHITE);
+			RadioButton warpFTL = new RadioButton("Warp Drives ");
+			warpFTL.setToggleGroup(ftlStyle);
+			warpFTL.setTextFill(Color.WHITE);
+			ftlToggleBox.getChildren().addAll(jumpFTL, warpFTL);
+			ftlStyle.selectToggle(jumpFTL);
+			Label ftlStyleLabel  = new Label("FTL Style:   ");
+			ftlStyleLabel.setTranslateY(4);
+			ftlStyleLabel.setStyle("-fx-font-size: 18");
+			ftlStyleLabel.setTextFill(Color.WHITE);
+			temp = new Region();
+			HBox.setHgrow(temp, Priority.ALWAYS);
+			factionBox.getChildren().addAll(ftlStyleLabel, ftlToggleBox, temp);
+			
+			ColorPicker factionColorPicker = new ColorPicker(Color.GREEN);
+			factionColorPicker.setTranslateY(5);
+			Label factionColorLabel = new Label("Faction Color:   ");
+			factionColorLabel.setTranslateY(4);
+			factionColorLabel.setStyle("-fx-font-size: 18");
+			factionColorLabel.setTextFill(Color.WHITE);
+			temp = new Region();
+			HBox.setHgrow(temp, Priority.ALWAYS);
+			factionBox.getChildren().addAll(factionColorLabel, factionColorPicker, temp);
+			
+			factionNames.add(nameField);
+			factionUsesJump.add(jumpFTL);
+			factionColors.add(factionColorPicker);
+			root.getChildren().add(factionBox);
+		}
+		
 		
 		return root;
 	}
@@ -89,7 +186,7 @@ public class NewGamePane extends BorderPane{
 		titlePane.getChildren().add(title);
 		this.setTop(titlePane);
 		
-		
+		galaxySettings = new Slider[4];
 		
 		VBox root = new VBox();
 		
@@ -101,23 +198,26 @@ public class NewGamePane extends BorderPane{
 		Label starQuantityLabel   = new Label("Frenquency of Stars");
 		starQuantityLabel.setTextFill(Color.WHITE);
 		Slider starQuantitySlider = new Slider();
-		starQuantitySlider.setMin(1);
-		starQuantitySlider.setMax(10);
-		starQuantitySlider.setValue(5);
+		starQuantitySlider.setMin(.001);
+		starQuantitySlider.setMax(.05);
+		starQuantitySlider.setValue(.025);
+		galaxySettings[0] = starQuantitySlider;
 		
 		Label planetQuantityLabel   = new Label("Frenquency of All Planets");
 		planetQuantityLabel.setTextFill(Color.WHITE);
 		Slider planetQuantitySlider = new Slider();
-		planetQuantitySlider.setMin(1);
-		planetQuantitySlider.setMax(18);
-		planetQuantitySlider.setValue(9);
+		planetQuantitySlider.setMin(0.05);
+		planetQuantitySlider.setMax(0.95);
+		planetQuantitySlider.setValue(.75);
+		galaxySettings[1] = planetQuantitySlider;
 		
 		Label habitableQuantityLabel   = new Label("Frenquency of Habitable Planets");
 		habitableQuantityLabel.setTextFill(Color.WHITE);
 		Slider habitableQuantitySlider = new Slider();
-		habitableQuantitySlider.setMin(1);
-		habitableQuantitySlider.setMax(12);
-		habitableQuantitySlider.setValue(4);
+		habitableQuantitySlider.setMin(.05);
+		habitableQuantitySlider.setMax(0.5);
+		habitableQuantitySlider.setValue(.2);
+		galaxySettings[2] = habitableQuantitySlider;
 		
 		systemQuantities.setAlignment(Pos.CENTER);
 		systemQuantities.getChildren().addAll(starQuantityLabel, starQuantitySlider, new Label(""),
@@ -135,6 +235,7 @@ public class NewGamePane extends BorderPane{
 		galaxySizeSlider.setMin(10);
 		galaxySizeSlider.setMax(100);
 		galaxySizeSlider.setValue(25);
+		galaxySettings[3] = galaxySizeSlider;
 		
 		Label galaxyShapeLabel = new Label("Galaxy Shape");
 		galaxyShapeLabel.setTextFill(Color.WHITE);

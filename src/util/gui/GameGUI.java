@@ -16,7 +16,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -26,8 +25,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import util.Faction;
 import util.GameController;
 import util.Location;
 import util.Map;
@@ -53,6 +52,7 @@ public class GameGUI extends Application{
 	private Label middleLabel;
 	private Label bottomLabel;
 	private StackPane cancelButton;
+	private ScrollPane scrollPane;
 	
 	private boolean shipMoveFlag;
 	
@@ -78,6 +78,8 @@ public class GameGUI extends Application{
 		primaryStage.setMaximized(true);
 		primaryStage.show();
 		
+		centerViewOn(gameController.getCurrentFaction().getCapital().getCoordinates()[0], gameController.getCurrentFaction().getCapital().getCoordinates()[1]);
+		
 		primaryStage.setOnCloseRequest((event) -> {
 			System.exit(0);;
 		});
@@ -101,8 +103,7 @@ public class GameGUI extends Application{
 		VBox infoBox = new VBox();
 		infoBox.setAlignment(Pos.CENTER);
 		sideMenuTitle = new Label(gameController.getCurrentFaction().getName());
-		sideMenuTitle.setStyle("-fx-font-size: 40; -fx-text-fill: " + gameController.getCurrentFaction().getColor());
-		colorable.add(sideMenuTitle);
+		sideMenuTitle.setStyle("-fx-font-size: 40; -fx-text-fill: white;");
 		sideMenuTitle.setAlignment(Pos.CENTER);
 		sideMenuImage = new ImageView(imageCache.getGalaxies()[0]);
 		Pane imagePane = new Pane(sideMenuImage);
@@ -116,9 +117,8 @@ public class GameGUI extends Application{
 		sideInfoLabels = new Label[5];
 		for(int i = 0; i < sideInfoLabels.length; ++i){
 			sideInfoLabels[i] = new Label();
-			sideInfoLabels[i].setStyle("-fx-text-fill: " + gameController.getCurrentFaction().getColor());
+			sideInfoLabels[i].setStyle("-fx-text-fill: white;");
 			sideInfoLabels[i].setAlignment(Pos.CENTER_LEFT);
-			colorable.add(sideInfoLabels[i]);
 		}
 		sideInfoLabels[0].setText("Income: \t\t" + gameController.getCurrentFaction().getIncome());
 		sideInfoLabels[1].setText("Treasury: \t\t" + gameController.getCurrentFaction().getTreasury());
@@ -143,8 +143,7 @@ public class GameGUI extends Application{
 		colorable.add(topButtonImage);
 		topButton.getChildren().addAll(topButtonImage, highlights[0]);
 		topLabel = new Label("Empire");
-		topLabel.setStyle("-fx-font-size: 40; -fx-text-fill: " + gameController.getCurrentFaction().getColor());
-		colorable.add(topLabel);
+		topLabel.setStyle("-fx-font-size: 40; -fx-text-fill: white;");
 		topButton.getChildren().add(topLabel);
 		topButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	        @Override
@@ -168,8 +167,7 @@ public class GameGUI extends Application{
 		colorable.add(middleButtonImage);
 		middleButton.getChildren().addAll(middleButtonImage, highlights[1]);
 		middleLabel = new Label("Foreign Affairs");
-		middleLabel.setStyle("-fx-font-size: 40; -fx-text-fill: " + gameController.getCurrentFaction().getColor());
-		colorable.add(middleLabel);
+		middleLabel.setStyle("-fx-font-size: 40; -fx-text-fill: white;");
 		middleButton.getChildren().add(middleLabel);
 		middleButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	        @Override
@@ -193,8 +191,7 @@ public class GameGUI extends Application{
 		colorable.add(bottomButtonImage);
 		bottomButton.getChildren().addAll(bottomButtonImage, highlights[2]);
 		bottomLabel = new Label("Science");
-		bottomLabel.setStyle("-fx-font-size: 40; -fx-text-fill: " + gameController.getCurrentFaction().getColor());
-		colorable.add(bottomLabel);
+		bottomLabel.setStyle("-fx-font-size: 40; -fx-text-fill: white;");
 		bottomButton.getChildren().add(bottomLabel);
 		bottomButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	        @Override
@@ -219,8 +216,7 @@ public class GameGUI extends Application{
 		colorable.add(cancelButtonImage);
 		cancelButton.getChildren().addAll(cancelButtonImage, highlights[3]);
 		Label cancelLabel = new Label("Done");
-		cancelLabel.setStyle("-fx-font-size: 40;  -fx-text-fill: " + gameController.getCurrentFaction().getColor());
-		colorable.add(cancelLabel);
+		cancelLabel.setStyle("-fx-font-size: 40;  -fx-text-fill: white;");
 		cancelButton.getChildren().add(cancelLabel);
 		cancelButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	        @Override
@@ -355,7 +351,7 @@ public class GameGUI extends Application{
 			}
 			
 		} else if (selected instanceof Star){
-			sideMenuImage.setImage(imageCache.getBlueStar());
+			sideMenuImage.setImage(imageCache.getRedStar());
 			sideMenuTitle.setText(((Star) selected).getName());
 			
 			if(((Star) selected).getFaction() == null){
@@ -376,7 +372,7 @@ public class GameGUI extends Application{
 				sideInfoLabels[0].setText("Income: \t\t" + ((Star) selected).getIncome());
 				sideInfoLabels[1].setText("Population: \t" + ((Star) selected).getPopulation());
 				sideInfoLabels[2].setText("Industry: \tN/A");
-				sideInfoLabels[3].setText("Shipyard: \t\tN/A");
+				sideInfoLabels[3].setText("Shipyard: \t\t" + ((Star) selected).getShipyardLevel());
 				sideInfoLabels[4].setText("Planets: \t\t" + ((Star) selected).getPlanets().length);
 			} else if (((Star) selected).getFaction() != gameController.getCurrentFaction()){
 				topLabel.setText("Invade");
@@ -423,7 +419,7 @@ public class GameGUI extends Application{
 					temp = (StackPane)getNodeByCoordinate(mapView, x, y);
 					temp.getChildren().clear();
 					if(gameMap.getMap()[x][y].getStar() != null){
-						temp.getChildren().add(new ImageView(imageCache.getBlueStarS()));
+						temp.getChildren().add(new ImageView(imageCache.getRedStarS()));
 					}
 				}
 				
@@ -454,8 +450,7 @@ public class GameGUI extends Application{
 		
 		StackPane nextButton = new StackPane();
 		Label nextLabel = new Label("Next");
-		nextLabel.setStyle("-fx-font-size: 28; -fx-text-fill: " + gameController.getCurrentFaction().getColor());
-		colorable.add(nextLabel);
+		nextLabel.setStyle("-fx-font-size: 28; -fx-text-fill: white;");
 		ImageView nextHighlight = new ImageView(imageCache.getButtonBRHighlight());
 		imageCache.recolor(nextHighlight, gameController.getCurrentFaction().getColor());
 		colorable.add(nextHighlight);
@@ -476,6 +471,7 @@ public class GameGUI extends Application{
 			gameController.endFactionTurn();
 			updateSideMenu();
 			recolor();
+			centerViewOn(gameController.getCurrentFaction().getCapital().getCoordinates()[0], gameController.getCurrentFaction().getCapital().getCoordinates()[1]);
 		});
 		
 		bottomRoot.getChildren().addAll(nextButton);
@@ -486,7 +482,7 @@ public class GameGUI extends Application{
 		
 		
 		
-		ScrollPane bigPane = new ScrollPane();
+		scrollPane = new ScrollPane();
 		mapView = new GridPane();
 		mapView.setStyle("-fx-background-color: transparent");
 		
@@ -501,7 +497,7 @@ public class GameGUI extends Application{
 				Location location = gameMap.getMap()[x][y];
 				if(location != null){
 					if(location.getStar() != null){
-						temp.getChildren().add(new ImageView(imageCache.getBlueStarS()));
+						temp.getChildren().add(new ImageView(imageCache.getRedStarS()));
 						if(location.getStar().getFaction() != null){
 							temp.setStyle("-fx-background-color: transparent; -fx-border-width: 1 1 1 1; -fx-border-color: " + location.getStar().getFaction().getColor());
 						}
@@ -612,13 +608,13 @@ public class GameGUI extends Application{
 				});
 			}
 		}
-		bigPane.setContent(mapView);
-		bigPane.setPannable(true);
-		bigPane.setStyle("-fx-background-color: transparent");
-		bigPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-		bigPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		scrollPane.setContent(mapView);
+		scrollPane.setPannable(true);
+		scrollPane.setStyle("-fx-background-color: transparent");
+		scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		
-		subRoot.getChildren().addAll(bigPane, utilPane);
+		subRoot.getChildren().addAll(scrollPane, utilPane);
 		
 		return subRoot;
 	}
@@ -639,21 +635,50 @@ public class GameGUI extends Application{
 		}
 	}
 	
-	public GameGUI(){
+	public GameGUI(Map gameMap){
+		this.gameMap = gameMap;
+		
 		imageCache = new ImageCache();
 		imageCache.loadMenuImages();
 		imageCache.loadGameImages();
-		audioCache = new AudioCache();
-		audioCache.loadGameAudio();
+//		audioCache = new AudioCache();
+//		audioCache.loadGameAudio();
 		
-		gameMap = new Map();
-		gameController = new GameController(gameMap, this, gameMap.getFactions());
+		gameController = new GameController(gameMap, this, gameMap.getFactions().toArray(new Faction[0]));
 		
 		targetMarker = new ImageView(imageCache.getTarget());
 		targetMarker.setMouseTransparent(true);
 		colorable = new ArrayList<Node>();
 		
 		shipMoveFlag = false;
+	}
+	
+	//default test constructor
+	public GameGUI(){
+		imageCache = new ImageCache();
+		imageCache.loadMenuImages();
+		imageCache.loadGameImages();
+//		audioCache = new AudioCache();
+//		audioCache.loadGameAudio();
+		
+		double[]  galacticProbabilities = {.025, .85, .1875};
+		String[]  factionNames = {"Alpha Association", "Delta Dominion"};
+		boolean[] factionUsesJump = {true, false};
+		String[]  factionColors = {"#004182", "#66ff00"};
+		
+		gameMap = new Map(20, 20, galacticProbabilities, factionNames, factionUsesJump, factionColors);
+		gameController = new GameController(gameMap, this, gameMap.getFactions().toArray(new Faction[0]));
+		
+		targetMarker = new ImageView(imageCache.getTarget());
+		targetMarker.setMouseTransparent(true);
+		colorable = new ArrayList<Node>();
+		
+		shipMoveFlag = false;
+	}
+	
+	private void centerViewOn(double x, double y){
+		scrollPane.setHvalue(x/gameMap.getDimensions()[0]);
+		scrollPane.setVvalue(y/gameMap.getDimensions()[1]);
 	}
 	
 	/**

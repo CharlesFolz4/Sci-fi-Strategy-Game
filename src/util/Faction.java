@@ -10,6 +10,7 @@ public class Faction{
 	private boolean usesJump;
 	private ArrayList<Star> stars;
 	private ArrayList<Ship> ships;
+	private Location capital;
 	
 	private double taxRate;
 	private double treasury;
@@ -73,6 +74,14 @@ public class Faction{
 		shipyardUpkeepMods[10] = 0.25;
 	}
 	
+	public Location getCapital(){
+		return capital;
+	}
+	
+	public void setCapital(Location capital){
+		this.capital = capital;
+	}
+	
 	public String getColor(){
 		return color;
 	}
@@ -105,7 +114,7 @@ public class Faction{
 		for(Ship ship:ships){
 			income -= ship.getUpkeep();
 		}
-		//TODO add build costs, trade income etc.
+		//TODO add build costs, trade income, building upkeep etc.
 		return income;
 	}
 	

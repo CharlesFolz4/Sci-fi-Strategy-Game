@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.imageio.ImageIO;
+
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -36,6 +38,8 @@ public class ImageCache {
 	private Image[] galaxies;
 	private Image blueStar;
 	private Image blueStarS;
+	private Image redStar;
+	private Image redStarS;
 	private Image ship;
 	private Image shipS;
 	private Image ship1;
@@ -45,17 +49,11 @@ public class ImageCache {
 	public void loadShipyardImages(){
 		plus  = loadImage("plus.png");
 		minus = loadImage("minus.png");
-
-		//not implemented yet
-//		loadShipButton    = loadImage("Load_Ship_Template.png");
-//		saveShipButton    = loadImage("Save_Ship_Template.png");
-//		loadShipHighlight = loadImage("Load_Ship_Highlight.png");
-//		saveShipHighlight = loadImage("Save_Ship_Highlight.png");
-
-		buildShipButton = loadImage("Build_Ship.png");
+		
+		buildShipButton          = loadImage("Build_Ship.png");
 		buildShipButtonHighlight = loadImage("Build_Ship_Highlight.png");
-		cancelShipyardButton = loadImage("Cancel_Shipyard.png");
-		cancelShipyardHighlight = loadImage("Cancel_Shipyard_Highlight.png");
+		cancelShipyardButton     = loadImage("Cancel_Shipyard.png");
+		cancelShipyardHighlight  = loadImage("Cancel_Shipyard_Highlight.png");
 	}
 	
 	public void clearShipyardImages(){
@@ -80,8 +78,8 @@ public class ImageCache {
 	
 	public void loadGameImages(){
 		background = loadImage("Star_Background.png");
-		blueStar   = loadImage("Star_Blue.png");
-		blueStarS  = loadImage("Star_Blue_S.png");
+		redStar    = loadImage("Star_Red.png");
+		redStarS   = loadImage("Star_Red_S.png");
 		shipS      = loadImage("Ship_Icon.png");
 		ship       = loadImage("Ship_Blueprints_S.png");
 		ship1      = loadImage("Ship_Blueprints1.png");
@@ -90,7 +88,7 @@ public class ImageCache {
 	
 	public void loadMenuImages(){
 		flag        = loadImage("flag.png");
-		background  = loadImage("Whirlpool_Galaxy.png");
+		background  = loadImage("Whirlpool_Galaxy.png");		
 		menuButton  = loadImage("Menu_Button.png");
 		buttonBR    = loadImage("ButtonBR.png");
 		menuButtonHighlight = loadImage("Button_Highlight.png");
@@ -113,24 +111,30 @@ public class ImageCache {
 	}
 	
 	private Image loadImage(String imageName){
-		Image image = null;
-		//path = ImageCache.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		//path += File.separator + "util" + File.separator + "gui" + File.separator + "images" + File.separator;
-//		System.out.println(path + imageName);
-		File imageFile    = new File(path + imageName);
+		Image image       = null;
 		InputStream input = null;
+		File imageFile    = null;
+		
+		//case for when program is run from a jar
+		if(ImageCache.class.getResource("ImageCache.class").toString().substring(0, 3).equals("jar")){
+			path = ImageCache.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+			path = path.substring(0, path.length()-4);
+			path += File.separator + "util" + File.separator + "gui" + File.separator + "images" + File.separator;
+		}
+		
+//		System.out.println(path + imageName);
+		imageFile = new File(path + imageName);
 		try{
 			input = new FileInputStream(imageFile);
 			image = new Image(input);
 			input.close();
 		}catch(FileNotFoundException e){
-			System.out.println("File not found: " + imageName + "\n");
+			System.out.println("File not found: " + imageName + " at " + imageFile.getAbsolutePath() + "\n");
 //			e.printStackTrace();
 		}catch(IOException e){
 			System.out.println("General exception");
 //			e.printStackTrace();
 		}
-		
 		return image;
 	}
 	
@@ -187,8 +191,6 @@ public class ImageCache {
 		return saveShipHighlight;
 	}
 	
-	
-	
 	public Image getTarget(){
 		return target;
 	}
@@ -205,12 +207,12 @@ public class ImageCache {
 		return shipS;
 	}
 	
-	public Image getBlueStar(){
-		return blueStar;
+	public Image getRedStar(){
+		return redStar;
 	}
 	
-	public Image getBlueStarS(){
-		return blueStarS;
+	public Image getRedStarS(){
+		return redStarS;
 	}
 	
 	public Image getFlag(){

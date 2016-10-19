@@ -251,12 +251,15 @@ public class Shipyard extends BorderPane{
 		
 		VBox buttons = new VBox();
 		StackPane buildButton = new StackPane();
+		buildButton.setAlignment(Pos.CENTER);
 		ImageView buildButtonHighlight = new ImageView(imageCache.getBuildShipHighlight());
 		imageCache.recolor(buildButtonHighlight, currentFaction.getColor());
 		buildButtonHighlight.setVisible(false);
+		Label buildButtonLabel = new Label("Build Specified Ship");
+		buildButtonLabel.setStyle("-fx-font-size: 20; -fx-text-fill: white;");
 		ImageView buildButtonImage = new ImageView(imageCache.getBuildShipButton());
 		imageCache.recolor(buildButtonImage, currentFaction.getColor());
-		buildButton.getChildren().addAll(buildButtonImage, buildButtonHighlight);
+		buildButton.getChildren().addAll(buildButtonLabel, buildButtonImage, buildButtonHighlight);
 		buildButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent t) {
@@ -283,8 +286,6 @@ public class Shipyard extends BorderPane{
 				
 				Ship ship;
 				if(currentFaction.usesJump()){
-					
-					
 					ship = new JumpShip(coords, currentFaction, shipName, (int)upkeep, hp, cargoSpace, engine, weapons, defenses);
 				}else{
 					ship = new WarpShip(coords, currentFaction, shipName, (int)upkeep, hp, cargoSpace, engine, weapons, defenses);
@@ -303,9 +304,11 @@ public class Shipyard extends BorderPane{
 		ImageView cancelButtonHighlight = new ImageView(imageCache.getCancelShipyardHighlight());
 		imageCache.recolor(cancelButtonHighlight, currentFaction.getColor());
 		cancelButtonHighlight.setVisible(false);
+		Label cancelButtonLabel = new Label("Cancel");
+		cancelButtonLabel.setStyle("-fx-font-size: 20; -fx-text-fill: white;");
 		ImageView cancelButtonImage = new ImageView(imageCache.getCancelShipyardButton());
 		imageCache.recolor(cancelButtonImage, currentFaction.getColor());
-		cancelButton.getChildren().addAll(cancelButtonImage, cancelButtonHighlight);
+		cancelButton.getChildren().addAll(cancelButtonLabel, cancelButtonImage, cancelButtonHighlight);
 		cancelButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent t) {
