@@ -7,7 +7,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
@@ -42,7 +41,10 @@ public class MainMenu extends Application{
 		StackPane root = new StackPane();
 		root.getChildren().addAll(new ImageView(imageCache.getBackground()), subRoot);
 		
-		primaryStage.setScene(new Scene(root, 1920, 1080));
+		Scene scene = new Scene(root);
+		String css = this.getClass().getResource("/util/gui/css.css").toExternalForm();
+		scene.getStylesheets().add(css); 
+		primaryStage.setScene(scene);
 		primaryStage.setTitle("PLACEHOLDER");
 		primaryStage.show();
 		

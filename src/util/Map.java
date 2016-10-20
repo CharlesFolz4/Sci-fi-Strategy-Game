@@ -1,8 +1,14 @@
 package util;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 
 import Ships.JumpShip;
 import Ships.Ship;
@@ -31,17 +37,17 @@ public class Map {
 
 					int index = (int)(Math.random() * starNames.size());
 					
-					int counter = 0;
-					while(Math.random() < galacticProbabilities[1] && counter < 20){
+					Random rand = new Random();
+					int planetCount = (int) (rand.nextGaussian()*3+8); //Standard deviation 3, median 8
+					for(int p = 0; p < planetCount; ++p){
 						if(Math.random() < galacticProbabilities[2]){
 							int popCap = (int)(Math.random() * 1500);
 							popCap *= 1000;
 							popCap += 100000;
-							tempPlanets.add(new Planet(starNames.get(index) + " " + integerToRomanNumerals(counter), popCap)); //add randomization element to the population cap
+							tempPlanets.add(new Planet(starNames.get(index) + " " + integerToRomanNumerals(p), popCap)); //add randomization element to the population cap
 						} else {
-							tempPlanets.add(new Planet(starNames.get(index) + " " + integerToRomanNumerals(counter), 0));
+							tempPlanets.add(new Planet(starNames.get(index) + " " + integerToRomanNumerals(p), 0));
 						}
-						counter++;
 					}
 					
 					tempStar = new Star(i, j, starNames.get(index), tempPlanets.toArray(new Planet[0]));
@@ -105,179 +111,32 @@ public class Map {
 	private ArrayList<String> generateStarNames() {
 		ArrayList<String> starNames = new ArrayList<String>();
 		
-		//generic
-		starNames.add("Eridani");
-		starNames.add("Cygni");
-		starNames.add("Ursae Majoris");
-		starNames.add("Ursae Minoris");
-		starNames.add("Achernar");
-		starNames.add("Algol");
-		starNames.add("Antares");
-		starNames.add("Hydri");
-		starNames.add("Andromedae");
-		starNames.add("Gliese");
-		starNames.add("Mira");
-		starNames.add("Polaris");
-		starNames.add("Procyon");
-		starNames.add("Enigma");
-		starNames.add("Wolf");
-		starNames.add("Kruger");
-		
-		//Smite
-		starNames.add("Agni");
-		starNames.add("Muzen Cab");
-		starNames.add("Ah Puch");
-		starNames.add("Anubis");
-		starNames.add("Arachne");
-		starNames.add("Artemis");
-		starNames.add("Ares");
-		starNames.add("Bakusura");
-		starNames.add("Bellona");
-		starNames.add("Cabrakan");
-		starNames.add("Chaac");
-		starNames.add("Chang'e");
-		starNames.add("Chiron");
-		starNames.add("Chronos");
-		starNames.add("Fenrir");
-		starNames.add("Freya");
-		starNames.add("Geb");
-		starNames.add("Guan Yu");
-		starNames.add("Hades");
-		starNames.add("Hel");
-		starNames.add("Hou Yi");
-		starNames.add("Janus");
-		starNames.add("Kali");
-		starNames.add("Khepri");
-		starNames.add("Kukulkan");
-		starNames.add("Kumbhakarna");
-		starNames.add("Loki");
-		starNames.add("Medusa");
-		starNames.add("Mercury");
-		starNames.add("Neith");
-		starNames.add("Nemesis");
-		starNames.add("Nox");
-		starNames.add("Odin");
-		starNames.add("Osiris");
-		starNames.add("Ra");
-		starNames.add("Ratatoskr");
-		starNames.add("Ravana");
-		starNames.add("Scylla");
-		starNames.add("Serqet");
-		starNames.add("Sobek");
-		starNames.add("Sol");
-		starNames.add("Sun Wukong");
-		starNames.add("Sylvanus");
-		starNames.add("Thanatos");
-		starNames.add("Thor");
-		starNames.add("Tyr");
-		starNames.add("Ullr");
-		starNames.add("Vamana");
-		starNames.add("Vulcan");
-		starNames.add("Xbalanque");
-		starNames.add("Xing Tian");
-		starNames.add("Ymir");
-		starNames.add("Zeus");
-		starNames.add("Zong Kui");
-		
-		//Stargate
-		starNames.add("Ba'al");
-		starNames.add("Asgard");
-		starNames.add("Abydos");
-		starNames.add("Asuras");
-		starNames.add("Chulak");
-		starNames.add("Dakara");
-		starNames.add("Lantea");
-		starNames.add("Orilla");
-		starNames.add("Tollana");
-		starNames.add("Teal'c");
-		starNames.add("O'Neil");
-		starNames.add("Jackson");
-		starNames.add("Carter");
-		starNames.add("Hammond");
-		starNames.add("Vala");
-		starNames.add("Fraiser");
-		starNames.add("Chekov");
-		starNames.add("Maybourne");
-		starNames.add("Woolsey");
-		starNames.add("McKay");
-		starNames.add("Desala");
-		starNames.add("Freyr");
-		starNames.add("Kvasir");
-		starNames.add("Apophis");
-		starNames.add("Hathor");
-		starNames.add("Nirrti");
-		starNames.add("Sokar");
-		starNames.add("Bra'tac");
-		starNames.add("Lantash");
-		starNames.add("Martouf");
-		starNames.add("Selmak");
-		starNames.add("Cassandra");
-		starNames.add("Chaka");
-		starNames.add("Sheppard");
-		starNames.add("Weir");
-		starNames.add("Ronon");
-		starNames.add("Beckett");
-		
-		//homestuck
-		starNames.add("Aradia");
-		starNames.add("Nitram");
-		starNames.add("Sollux");
-		starNames.add("Karkat");
-		starNames.add("Vantas");
-		starNames.add("Nepeta");
-		starNames.add("Kanaya");
-		starNames.add("Terezi");
-		starNames.add("Pyrope");
-		starNames.add("Vriska");
-		starNames.add("Serket");
-		starNames.add("Equius");
-		starNames.add("Gamzee");
-		starNames.add("Eridan");
-		starNames.add("Feferi");
-		starNames.add("Megido");
-		starNames.add("Porrim");
-		starNames.add("Latula");
-		starNames.add("Aranea");
-		starNames.add("Meenah");
-		starNames.add("Peixes");
-		starNames.add("Marquise");
-		starNames.add("Spinneret");
-		starNames.add("Mindfang");
-		starNames.add("Signless");
-		starNames.add("Dolorosa");
-		starNames.add("Neophyte");
-		starNames.add("Redglare");
-		starNames.add("Darkleer");
-		starNames.add("Dualscar");
-		starNames.add("Condesce");
-		starNames.add("Egbert");
-		starNames.add("Lalonde");
-		starNames.add("Strider");
-		starNames.add("Harley");
-		starNames.add("Roxy");
-		starNames.add("Dirk");
-		
-		//names
-		starNames.add("Asimov");
-		starNames.add("Rothfuss");
-		starNames.add("Wells");
-		starNames.add("Heinlein");
-		starNames.add("Poe");
-		starNames.add("Boethius");
-		starNames.add("Tesla");
-		starNames.add("Rommel");
-		starNames.add("Sun Tzu");
-		starNames.add("Tesla");
-		starNames.add("Zim");
-		starNames.add("Derham");
-		starNames.add("Folz");
-		starNames.add("Volch");
-		starNames.add("Narf");
-		starNames.add("Hallahan");
-		starNames.add("Hansen");
-		starNames.add("Bruno");
-		starNames.add("Higham");
-		starNames.add("Vigiano");
+		String path = "bin" + File.separator + "util" + File.separator;
+		File stars = new File(path + "Stars.txt");
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(stars));
+
+			String starName;
+			while ((starName = reader.readLine()) != null) {
+				if(!starName.equals("")){
+					starNames.add(starName);
+				}
+		    }
+			
+		} catch (FileNotFoundException e) {
+			System.out.println("No file");
+//			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("Other I/O exception");
+//			e.printStackTrace();
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		return starNames;
 	}

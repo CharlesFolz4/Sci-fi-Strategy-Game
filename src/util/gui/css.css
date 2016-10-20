@@ -5,6 +5,7 @@
 	-fx-background-color: transparent;
 }
 
+
 .text-field {
     -fx-background-color: #aaaaaa , red , black;
     -fx-text-fill: white;

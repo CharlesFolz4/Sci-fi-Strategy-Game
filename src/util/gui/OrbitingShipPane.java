@@ -17,7 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import util.gui.images.ImageCache;
 
-//TODO this is used for setting ships as 'permanent' system defenders, for loading cargo/colonists onto and off of ships
+//TODO this is used for setting ships as 'permanent' system defenders, for loading cargo/colonists/soldiers onto and off of ships
 public class OrbitingShipPane extends BorderPane {
 	GameGUI gameGUI;
 	ImageCache imageCache;

@@ -52,7 +52,6 @@ public class GameController {
 					attacking = !attacking;
 				}//end while
 				//TODO add option (or small percentage chance) to disable and capture enemy vessel
-				//TODO: Ship isn't being destroyed well enough.  Need to eliminate all traces of it ever existing, just to be sure.
 				Ship destroyed = null;
 				if(attacker.getCurrentHealth() <= 0){
 					destroyed = attacker;
@@ -144,7 +143,7 @@ public class GameController {
 		
 		
 		currentFactionIndex = currentFactionIndex==(factions.length-2)? 0:++currentFactionIndex;
-		//TODO: This is where the faction AI will control their empires from
+		//TODO: This is where the faction AI / computer players will control their empires from
 	}
 	
 	

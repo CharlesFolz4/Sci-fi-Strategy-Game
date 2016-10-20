@@ -9,12 +9,15 @@ import javafx.scene.Node;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -67,7 +70,8 @@ public class NewGamePane extends BorderPane{
 			if(title.getText().equals("Galaxy Settings")){
 				this.setCenter(makeNewEmpire());
 				
-			} else if(title.getText().equals("Empire Settings")){
+			} else if(title.getText().equals("Faction Settings")){
+				System.out.println("starting process");
 				int dimension = (int) galaxySettings[3].getValue();
 				double[] probabilities = {galaxySettings[0].getValue(),galaxySettings[1].getValue(),galaxySettings[2].getValue()};
 				String[] factionNames = new String[this.factionNames.size()];
@@ -87,14 +91,15 @@ public class NewGamePane extends BorderPane{
 							   Integer.toHexString(g) + (Integer.toHexString(g).length() == 1? "0":"") +
 							   Integer.toHexString(b) + (Integer.toHexString(b).length() == 1? "0":"");
 				}
-				
+				System.out.println("Bloop");
 				Map gameMap = new Map(dimension, dimension, probabilities, factionNames, factionUsesJump, factionColors);
-	        	
+	        	System.out.println("Moose");
 	        	GameGUI gameGUI = new GameGUI(gameMap);
 	        	Stage applicationStage = new Stage();
 				gameGUI.start(applicationStage);
 				Stage currentStage = (Stage) nextButton.getScene().getWindow();
 				currentStage.close();
+				System.out.println("Not here!");
 			}
 		});
 		
@@ -108,9 +113,11 @@ public class NewGamePane extends BorderPane{
 
 
 	private Node makeNewEmpire() {
+		ScrollPane testRoot = new ScrollPane();
 		VBox root = new VBox(20);
+		testRoot.setContent(root);
 		root.setPadding(new Insets(100));
-		title.setText("Empire Settings");
+		title.setText("Faction Settings");
 		//do stuff
 		root.setAlignment(Pos.CENTER);
 		
@@ -118,10 +125,12 @@ public class NewGamePane extends BorderPane{
 		factionUsesJump = new ArrayList<RadioButton>();
 		factionColors   = new ArrayList<ColorPicker>();
 		
+		ArrayList<HBox> factionBoxes = new ArrayList<HBox>();
 		int factionCount = (int)Math.sqrt(galaxySettings[3].getValue());
-		System.out.println(factionCount);
+		System.out.println("Factions:" + factionCount);
 		for(int i = 0; i < factionCount; ++i){
 			HBox factionBox = new HBox();
+			factionBoxes.add(factionBox);
 			factionBox.setStyle("-fx-background-color: rgba(16, 16, 16, .85); -fx-border-width: 2; -fx-border-color: white;");
 			factionBox.setPadding(new Insets(15));
 			Region temp;
@@ -164,14 +173,148 @@ public class NewGamePane extends BorderPane{
 			HBox.setHgrow(temp, Priority.ALWAYS);
 			factionBox.getChildren().addAll(factionColorLabel, factionColorPicker, temp);
 			
+			StackPane removeFactionButton = new StackPane();
+			ImageView removeFactionImage = new ImageView(imageCache.getDeleteFactionButton());
+			ImageView removeFactionHighlight = new ImageView(imageCache.getFactionButtonHighlight());
+			removeFactionHighlight.setVisible(false);
+			removeFactionButton.getChildren().addAll(removeFactionHighlight, removeFactionImage);
+			removeFactionButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
+		        @Override
+		        public void handle(MouseEvent t) {
+		        	removeFactionHighlight.setVisible(true);
+		        }
+		    });
+			removeFactionButton.setOnMouseExited(new EventHandler<MouseEvent>(){
+				@Override
+				public void handle(MouseEvent event) {
+					removeFactionHighlight.setVisible(false);
+				}
+			});
+			removeFactionButton.setOnMouseClicked((event) -> {
+				Node tempFactionBox = ((Node) event.getSource()).getParent();
+				int index = factionBoxes.indexOf(tempFactionBox);
+				((VBox)tempFactionBox.getParent()).getChildren().remove(tempFactionBox);
+				factionBoxes.remove(index);
+				factionNames.remove(index);
+				factionUsesJump.remove(index);
+				factionColors.remove(index);
+			});
+			factionBox.getChildren().add(removeFactionButton);
+			
 			factionNames.add(nameField);
 			factionUsesJump.add(jumpFTL);
 			factionColors.add(factionColorPicker);
 			root.getChildren().add(factionBox);
 		}
 		
+		StackPane addFactionButton = new StackPane();
+		addFactionButton.setStyle("-fx-background-color: rgba(16, 16, 16, .85); -fx-background-radius: 10;");
+		addFactionButton.setMaxSize(60, 60);
+		ImageView addFactionImage = new ImageView(imageCache.getAddFactionButton());
+		ImageView addFactionHighlights = new ImageView(imageCache.getFactionButtonHighlight());
+		addFactionHighlights.setVisible(false);
+		addFactionButton.getChildren().addAll(addFactionHighlights, addFactionImage);
+		addFactionButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
+	        @Override
+	        public void handle(MouseEvent t) {
+	        	addFactionHighlights.setVisible(true);
+	        }
+	    });
+		addFactionButton.setOnMouseExited(new EventHandler<MouseEvent>(){
+			@Override
+			public void handle(MouseEvent event) {
+				addFactionHighlights.setVisible(false);
+			}
+		});
+		addFactionButton.setOnMouseClicked((event) -> {
+			HBox factionBox = new HBox();
+			factionBoxes.add(factionBox);
+			factionBox.setStyle("-fx-background-color: rgba(16, 16, 16, .85); -fx-border-width: 2; -fx-border-color: white;");
+			factionBox.setPadding(new Insets(15));
+			Region temp;
+			
+			Label nameLabel = new Label("Faction Name:   ");
+			nameLabel.setTranslateY(4);
+			nameLabel.setStyle("-fx-font-size: 18");
+			nameLabel.setTextFill(Color.WHITE);
+			
+			int i = factionNames.size()-1;
+			String text = factionNames.get(i).getText();
+			TextField nameField = new TextField("Player " + (Character.getNumericValue(text.charAt(text.length()-1))+1));
+			nameField.setTranslateY(5);
+			temp = new Region();
+			HBox.setHgrow(temp, Priority.ALWAYS);
+			factionBox.getChildren().addAll(nameLabel, nameField, temp);
+			
+			VBox ftlToggleBox = new VBox(4);
+			ToggleGroup ftlStyle = new ToggleGroup();
+			RadioButton jumpFTL = new RadioButton("Jump Drives ");
+			jumpFTL.setToggleGroup(ftlStyle);
+			jumpFTL.setTextFill(Color.WHITE);
+			RadioButton warpFTL = new RadioButton("Warp Drives ");
+			warpFTL.setToggleGroup(ftlStyle);
+			warpFTL.setTextFill(Color.WHITE);
+			ftlToggleBox.getChildren().addAll(jumpFTL, warpFTL);
+			ftlStyle.selectToggle(jumpFTL);
+			Label ftlStyleLabel  = new Label("FTL Style:   ");
+			ftlStyleLabel.setTranslateY(4);
+			ftlStyleLabel.setStyle("-fx-font-size: 18");
+			ftlStyleLabel.setTextFill(Color.WHITE);
+			temp = new Region();
+			HBox.setHgrow(temp, Priority.ALWAYS);
+			factionBox.getChildren().addAll(ftlStyleLabel, ftlToggleBox, temp);
+			
+			ColorPicker factionColorPicker = new ColorPicker(Color.GREEN);
+			factionColorPicker.setTranslateY(5);
+			Label factionColorLabel = new Label("Faction Color:   ");
+			factionColorLabel.setTranslateY(4);
+			factionColorLabel.setStyle("-fx-font-size: 18");
+			factionColorLabel.setTextFill(Color.WHITE);
+			temp = new Region();
+			HBox.setHgrow(temp, Priority.ALWAYS);
+			factionBox.getChildren().addAll(factionColorLabel, factionColorPicker, temp);
+			
+			StackPane removeFactionButton = new StackPane();
+			ImageView removeFactionImage = new ImageView(imageCache.getDeleteFactionButton());
+			ImageView removeFactionHighlight = new ImageView(imageCache.getFactionButtonHighlight());
+			removeFactionHighlight.setVisible(false);
+			removeFactionButton.getChildren().addAll(removeFactionHighlight, removeFactionImage);
+			removeFactionButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
+		        @Override
+		        public void handle(MouseEvent t) {
+		        	removeFactionHighlight.setVisible(true);
+		        }
+		    });
+			removeFactionButton.setOnMouseExited(new EventHandler<MouseEvent>(){
+				@Override
+				public void handle(MouseEvent event) {
+					removeFactionHighlight.setVisible(false);
+				}
+			});
+			removeFactionButton.setOnMouseClicked((subEvent) -> {
+				Node tempFactionBox = ((Node) subEvent.getSource()).getParent();
+				int index = factionBoxes.indexOf(tempFactionBox);
+				((VBox)tempFactionBox.getParent()).getChildren().remove(tempFactionBox);
+				factionBoxes.remove(index);
+				factionNames.remove(index);
+				factionUsesJump.remove(index);
+				factionColors.remove(index);
+			});
+			factionBox.getChildren().add(removeFactionButton);
+			
+			factionNames.add(nameField);
+			factionUsesJump.add(jumpFTL);
+			factionColors.add(factionColorPicker);
+			root.getChildren().add(root.getChildren().size()-1, factionBox);
+		});
 		
-		return root;
+		root.getChildren().add(addFactionButton);
+		
+		testRoot.setStyle("-fx-background-color: transparent");
+		root.prefWidthProperty().bind(testRoot.widthProperty());
+		testRoot.setHbarPolicy(ScrollBarPolicy.NEVER);
+		testRoot.setVbarPolicy(ScrollBarPolicy.NEVER);
+		return testRoot;
 	}
 
 	private VBox makeNewGalaxySettings() {

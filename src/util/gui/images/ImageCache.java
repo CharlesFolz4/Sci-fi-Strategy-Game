@@ -23,6 +23,9 @@ public class ImageCache {
 	private Image buttonBR;
 	private Image buttonBRHighlight;
 	private Image buttonBL;
+	private Image addFactionButton;
+	private Image deleteFactionButton;
+	private Image factionButtonHighlight;
 	
 	private Image plus;
 	private Image minus;
@@ -93,6 +96,9 @@ public class ImageCache {
 		buttonBR    = loadImage("ButtonBR.png");
 		menuButtonHighlight = loadImage("Button_Highlight.png");
 		buttonBRHighlight   = loadImage("ButtonBR_Highlight.png");
+		addFactionButton       = loadImage("AddFactionButton.png");
+		deleteFactionButton    = loadImage("deleteFactionButton.png");
+		factionButtonHighlight = loadImage("FactionButtonHighlight.png");
 		
 		galaxies[0] = loadImage("Spiral_Galaxy_S.png");
 		galaxies[1] = loadImage("Many_Spiral_Galaxy_S.png");
@@ -107,6 +113,9 @@ public class ImageCache {
 		menuButtonHighlight = null;
 		buttonBR = null;
 		buttonBRHighlight = null;
+		addFactionButton = null;
+		deleteFactionButton = null;
+		factionButtonHighlight = null;
 		galaxies = null;
 	}
 	
@@ -152,6 +161,18 @@ public class ImageCache {
 		adjust.setSaturation((recolor.getSaturation()) );
 		image.setEffect(adjust);
 		return image;
+	}
+
+	public Image getAddFactionButton(){
+		return addFactionButton;
+	}
+	
+	public Image getDeleteFactionButton(){
+		return deleteFactionButton;
+	}
+	
+	public Image getFactionButtonHighlight(){
+		return factionButtonHighlight;
 	}
 	
 	public Image getCancelShipyardButton(){
