@@ -341,9 +341,9 @@ public class NewGamePane extends BorderPane{
 		Label starQuantityLabel   = new Label("Frenquency of Stars");
 		starQuantityLabel.setTextFill(Color.WHITE);
 		Slider starQuantitySlider = new Slider();
-		starQuantitySlider.setMin(.001);
-		starQuantitySlider.setMax(.05);
-		starQuantitySlider.setValue(.025);
+		starQuantitySlider.setMin(.05);
+		starQuantitySlider.setMax(.1);
+		starQuantitySlider.setValue(.07);
 		galaxySettings[0] = starQuantitySlider;
 		
 		Label planetQuantityLabel   = new Label("Frenquency of All Planets");

@@ -3,6 +3,7 @@ package Starsystem;
 import Ships.JumpShip;
 import Ships.Ship;
 import Ships.WarpShip;
+import util.BuildQueue;
 import util.Faction;
 import util.Selectable;
 
@@ -15,6 +16,8 @@ public class Star extends Selectable{
 	private double prosperity;
 	
 	private int soldiers;
+	
+	private BuildQueue<Ship> shipQueue;
 	
 	/**
 	 * Constructor for uninhabited system
@@ -30,6 +33,7 @@ public class Star extends Selectable{
 		this.planets  = planets;
 		prosperity    = 0;
 		shipyardLevel = 0;
+		shipQueue     = new BuildQueue<Ship>();
 	}
 	
 	/**
@@ -49,9 +53,11 @@ public class Star extends Selectable{
 		faction.addStar(this);
 		prosperity    = 1;
 		shipyardLevel = 1;
+		shipQueue     = new BuildQueue<Ship>();
 		soldiers = 100;
 	}
 	
+	//TODO: Outdated.  Replace using the BuildQueue
 	public Ship buildShip(boolean isJump, int engine, String name, int[] weapons, int[] defenses, int health, int cargoSize){
 		int total = weapons[0] + weapons[1] + weapons[2] + defenses[0] + defenses[1] + defenses[2];
 		int upkeep = total/4;
@@ -60,7 +66,6 @@ public class Star extends Selectable{
 		Ship ship;
 		if(isJump){
 			ship = new JumpShip(this.getCoordinates(), this.faction, name, upkeep, health, cargoSize, engine, weapons, defenses);
-			
 		}else{
 			ship = new WarpShip(this.getCoordinates(), this.faction, name, upkeep, health, cargoSize, engine, weapons, defenses);
 		}

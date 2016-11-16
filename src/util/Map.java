@@ -30,9 +30,10 @@ public class Map {
 		ArrayList<String> starNames = generateStarNames();
 		ArrayList<Planet> tempPlanets;
 		Star tempStar;
+		double[][] randomWeights = generateSmoothedArray(x, y);
 		for(int i = 0; i < x; ++i){
 			for(int j = 0; j < y; ++j){
-				if(Math.random() <= galacticProbabilities[0]){
+				if(Math.random() <= randomWeights[i][j] * galacticProbabilities[0]){
 					tempPlanets = new ArrayList<Planet>();
 
 					int index = (int)(Math.random() * starNames.size());
@@ -86,6 +87,35 @@ public class Map {
 		//This is here because of reasons involving turn changing
 		Faction uninhabited = new Faction("", false, "#000000");
 		factions.add(uninhabited);
+	}
+	
+	//TODO: Change to Perlin Noise eventually
+	private double[][] generateSmoothedArray(int xx, int yy){
+		double[][] raw = new double[xx][yy];
+		for(int x = 0; x < xx; ++x){
+			for(int y = 0; y < yy; ++y){
+				raw[x][y] = Math.random();
+			}
+		}
+		
+		int[] xOffset = {-1,0,1};
+		int[] yOffset = {-1,0,1};
+		double[][] smoothed = new double[xx][yy];
+		for(int x = 0; x < xx; ++x){
+			for(int y = 0; y < yy; ++y){
+				double temp = 0;
+				for(int oX : xOffset){
+					for( int oY : yOffset){
+						if(x+oX > 0 && y+oY >0 && x+oX < xx && y+oY < yy){
+							temp += raw[x+oX][y+oY];
+						}
+					}
+				}
+				smoothed[x][y] = temp/(xOffset.length * yOffset.length); //average of surrounding squares
+			}
+		}
+		
+		return smoothed;
 	}
 	
 	//This method doesn't really belong in this class

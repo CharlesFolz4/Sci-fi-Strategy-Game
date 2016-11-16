@@ -17,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -82,6 +83,30 @@ public class GameGUI extends Application{
 		
 		primaryStage.setOnCloseRequest((event) -> {
 			System.exit(0);;
+		});
+		
+//		KeyCode.
+		//keyboard shortcuts
+		scene.setOnKeyPressed(e -> {
+		    switch(e.getCode()){
+		    	case M:
+		    	case TAB:
+		    		//TODO: make a map popup
+		    		break;
+		    	case SPACE:
+		    		//TODO: centers view on home planet/capital
+//		    		centerViewOn(gameController.getCurrentFaction().getCapital().getCoordinates()[0], gameController.getCurrentFaction().getCapital().getCoordinates()[1]);
+		    		break;
+		    	case ESCAPE:
+		    		//TODO: Opens a menu thing
+		    		break;
+		    	case BACK_SPACE:
+		    		//TODO: Sets center as the map if in shipyard or somewhere else
+		    		
+		    		break;
+	    		default: System.out.print(e.getCharacter().toString());
+		    }
+		    e.consume();
 		});
 	}
 	
@@ -331,7 +356,7 @@ public class GameGUI extends Application{
 		} else if (selected instanceof Ship){
 			
 			((StackPane)getNodeByCoordinate(mapView, ((Ship)selected).getDestination()[0], ((Ship)selected).getDestination()[1])).getChildren().add(targetMarker);
-			
+			centerViewOn(selected.getCoordinates()[0], selected.getCoordinates()[1]);
 			
 			sideMenuImage.setImage(imageCache.getShip());
 			topLabel.setText("Move");
@@ -677,8 +702,15 @@ public class GameGUI extends Application{
 	}
 	
 	private void centerViewOn(double x, double y){
-		scrollPane.setHvalue(x/gameMap.getDimensions()[0]);
-		scrollPane.setVvalue(y/gameMap.getDimensions()[1]);
+		double viewportWidth    = scrollPane.getViewportBounds().getWidth();
+	    double maxHscrollPixels = mapView.getWidth() - viewportWidth;
+	    double hscrollPixels    = (x + 0.5) * mapView.getWidth() / gameMap.getDimensions()[0] - viewportWidth / 2;
+	    scrollPane.setHvalue(hscrollPixels / maxHscrollPixels);
+	    
+	    double viewportHeight   = scrollPane.getViewportBounds().getHeight();
+	    double maxVscrollPixels = mapView.getHeight() - viewportHeight;
+	    double vscrollPixels    = (y + 0.5) * mapView.getHeight() / gameMap.getDimensions()[1] - viewportHeight / 2;
+	    scrollPane.setVvalue(vscrollPixels / maxVscrollPixels);
 	}
 	
 	/**

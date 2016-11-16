@@ -1,5 +1,8 @@
 package util.gui;
 
+import com.sun.javafx.tk.FontLoader;
+import com.sun.javafx.tk.Toolkit;
+
 import Ships.JumpShip;
 import Ships.Ship;
 import Ships.WarpShip;
@@ -14,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -24,6 +28,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import util.Faction;
 import util.GameController;
 import util.gui.images.ImageCache;
@@ -80,6 +85,12 @@ public class Shipyard extends BorderPane{
 		this.setCenter(shipDataBox);
 		
 		shipDataBox.getChildren().addAll(makeBuildPane(), makeShipDisplayPane());
+		
+		//so keyboard shortcuts can work
+		this.requestFocus();
+		this.setOnMouseClicked((event) -> { 
+			this.requestFocus();
+		});
 	}
 	
 	//TODO: Make buttons-  Save as Template/Class, Load Template/Class,
@@ -111,7 +122,7 @@ public class Shipyard extends BorderPane{
 		shipNameLabel.setTextFill(Color.WHITE);
 		temp = new Pane(shipNameLabel);
 		temp.setStyle("-fx-border-width: 0 1 0 0; -fx-border-color: " + currentFaction.getColor() + "; -fx-background-color: rgba(16, 16, 16, .75);");
-		temp.setPrefWidth(150);
+		temp.setPrefWidth(200);
 		shipDisplayPane.add(temp, 1, 1);
 		
 		Label[] statsLabels = {new Label("Hull: "), new Label("Propulsion: "), new Label("Sensors: "), new Label("Cargo Space: "), new Label("Hangar Space: ")};
@@ -377,7 +388,7 @@ public class Shipyard extends BorderPane{
 		shipBuildPane.add(shipSystemsLabelBox, 0, 1, 4, 1);
 		GridPane.setHgrow(shipSystemsLabelBox, Priority.ALWAYS);
 		
-		//TODO: Make shift +click go by increments of 5 or 10
+		//TODO: Make shift + click go by increments of 5 or 10
 		Label[] shipSystems = {new Label("Hull:"), new Label("Propulsion:"), new Label("Sensors:"), new Label("Cargo:"), new Label("Hangars:")};
 		ImageView[] shipSystemsMinus = {new ImageView(imageCache.getMinus()), new ImageView(imageCache.getMinus()), new ImageView(imageCache.getMinus()), new ImageView(imageCache.getMinus()), new ImageView(imageCache.getMinus())};
 		shipSystemsPoints = new Label[5];
@@ -417,7 +428,7 @@ public class Shipyard extends BorderPane{
 				}
 				int count = Integer.parseInt(shipSystemsPoints[index].getText());
 				count--;
-				if(buildPoints[0] < maxBuildPoints){
+				if(buildPoints[0] < maxBuildPoints && count >= 0){
 					shipSystemsPoints[index].setText("" + count);
 					buildPoints[0]++;
 					buildPointLabel.setText("Build Points:\t\t" + buildPoints[0] +"\t");
@@ -725,6 +736,18 @@ public class Shipyard extends BorderPane{
 		    	shipNameLabel.setText(newValue);
 		    }
 		});
+		shipNameText.setTextFormatter(new TextFormatter<String>(c ->{
+			String tempString = shipNameText.getText() + c.getControlNewText();
+			Text text = new Text(tempString);
+			double width = text.getLayoutBounds().getWidth();
+			
+			if(width < 195){
+		        return c;
+		    } else {
+				return null;
+			}
+			
+		}));
 		
 		Label buildCostLabel = new Label("Build Cost:");
 		buildCostLabel.setStyle("-fx-font-size: 20;");
